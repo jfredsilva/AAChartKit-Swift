@@ -334,7 +334,7 @@ class CustomStyleForAreaChartComposer {
                                     [1.0, AAColor.clear]
                                 ])),
                         AAZonesElement()
-                            .color(AAColor.blue)
+                            .color(AAColor.brown)
                             .fillColor(AAGradientColor.linearGradient(
                                 direction: .toBottom,
                                 stops: [

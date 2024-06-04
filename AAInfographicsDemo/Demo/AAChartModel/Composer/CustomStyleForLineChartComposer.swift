@@ -599,16 +599,16 @@ class CustomStyleForLineChartComposer {
     }
     
     //https://github.com/AAChartModel/AAChartKit/issues/1291
+    //47
     static func customLineChartWithColorfulMarkersAndLines() -> AAChartModel {
         AAChartModel()
             .chartType(.line)
             .title("Custom Line Chart With Colorful Markers And Lines")
-            .markerRadius(18.0)//marker点半径为8个像素
+            .markerRadius(0)//marker点半径为8个像素
             .yAxisLineWidth(0)
             .legendEnabled(false)
             .series([
                 AASeriesElement()
-                    .name("Tokyo Hot")
                     .lineWidth(5.0)
                     .marker(AAMarker()
                         .states(AAMarkerStates()
@@ -616,35 +616,19 @@ class CustomStyleForLineChartComposer {
                                 .radius(40)
                                 .lineWidth(5))))
                     .data([
-                        2, 4, 8, 16, 32, 64, 128,
-                        AADataElement()
-                            .y(256.0)
-                            .color(AAColor.red)
-                            .toDic() as Any
+                        2, 4, 8, 16, 32, 64, 128, 64, 32, 16, 8, 4, 2
                     ])
-                    .zoneAxis(.x)
+                    .zoneAxis(.y)
                     .zones([
                         AAZonesElement()
-                            .value(1)
+                            .value(25)
                             .color(AAColor.red),
                         AAZonesElement()
-                            .value(2)
+                            .value(50)
                             .color(AAColor.orange),
                         AAZonesElement()
-                            .value(3)
+                            .value(200)
                             .color(AAColor.yellow),
-                        AAZonesElement()
-                            .value(4)
-                            .color(AAColor.green),
-                        AAZonesElement()
-                            .value(5)
-                            .color(AAColor.cyan),
-                        AAZonesElement()
-                            .value(6)
-                            .color(AAColor.blue),
-                        AAZonesElement()
-                            .value(7)
-                            .color(AAColor.purple),
                     ])
                 ,
             ])
