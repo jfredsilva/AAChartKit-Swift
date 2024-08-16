@@ -21,7 +21,7 @@ public struct AAChartUIView : UIViewRepresentable {
     
     public func makeUIView(context: Context) -> UIView {
         let coordinator = context.coordinator
-        
+
         if let options = options {
             coordinator.chartView.aa_drawChartWithChartOptions(options)
         } else {
@@ -32,9 +32,21 @@ public struct AAChartUIView : UIViewRepresentable {
     }
     
     public func updateUIView(_ uiView: UIView, context: Context) {
+        guard let series = self.model.series as? [AASeriesElement] else {
+            return
+        }
+
+        let coordinator = context.coordinator
+
+        //if self.model.xAxisLabelsEnabled ?? true {
+        //    coordinator.chartView.aa_refreshChartWholeContentWithChartModel(self.model)
+        //} else {
+            coordinator.chartView.aa_onlyRefreshTheChartDataWithChartModelSeries(series, animation: false)
+        //}
     }
     
     //-- MARK: coordinator
+    
     public func makeCoordinator() -> AAChartCoordinator {
         AAChartCoordinator(self)
     }
@@ -42,7 +54,7 @@ public struct AAChartUIView : UIViewRepresentable {
 
 @available(iOS 13.0, macOS 10.15, *)
 extension AAChartUIView {
-    
+
     public class AAChartCoordinator : NSObject {
         
         let parent: AAChartUIView
@@ -63,13 +75,8 @@ extension AAChartUIView {
 
 @available(iOS 13.0, macOS 10.15, *)
 #Preview {
-    let model = AAChartModel()
-        .chartType(.spline)
-        .markerSymbolStyle(.borderBlank)
-        .markerRadius(6)
-        .categories(["Java", "Swift", "Python", "Ruby", "PHP", "Go","C", "C#", "C++", "Perl", "R", "MATLAB", "SQL"])
-        .animationType(.swingFromTo)
-        .series([
+
+    let elements = [
             AASeriesElement()
                 .name("Tokyo")
                 .data([50, 320, 230, 370, 230, 400,])
@@ -86,6 +93,15 @@ extension AAChartUIView {
                 .name("London")
                 .data([130, 350, 160, 310, 250, 268,])
             ,
-        ])
+        ]
+
+    let model = AAChartModel()
+        .chartType(.spline)
+        .markerSymbolStyle(.borderBlank)
+        .markerRadius(6)
+        .categories(["Java", "Swift", "Python", "Ruby", "PHP", "Go","C", "C#", "C++", "Perl", "R", "MATLAB", "SQL"])
+        .animationType(.swingFromTo)
+        .series(elements)
+        
     return AAChartUIView(model: model)
 }
