@@ -13,10 +13,10 @@ public struct AAChartUIView : UIViewRepresentable {
     
     @Binding private var model: AAChartModel
     @Binding private var series: [AASeriesElement]
-    private var options: AAOptions?
+    @Binding private var options: AAOptions?
     
-    public init(model: Binding<AAChartModel>, series: Binding<[AASeriesElement]>, options: AAOptions? = nil) {
-        self.options = options
+    public init(model: Binding<AAChartModel>, series: Binding<[AASeriesElement]>, options: Binding<AAOptions?> = .constant(nil)) {
+        _options = options
 
         _series = series
         _model = model
@@ -41,8 +41,13 @@ public struct AAChartUIView : UIViewRepresentable {
         
         let coordinator = context.coordinator
 
-        //if self.model.xAxisLabelsEnabled ?? true {
+        if let options = options {
+            coordinator.chartView.aa_refreshChartWholeContentWithChartOptions(options)
+        } else {
             coordinator.chartView.aa_refreshChartWholeContentWithChartModel(self.model)
+        }
+        //if self.model.xAxisLabelsEnabled ?? true {
+//            coordinator.chartView.aa_refreshChartWholeContentWithChartModel(self.model)
         //} else {
 //            coordinator.chartView.aa_onlyRefreshTheChartDataWithChartModelSeries(series, animation: false)
         //}
