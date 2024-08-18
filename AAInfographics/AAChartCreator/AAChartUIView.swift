@@ -12,10 +12,13 @@ import SwiftUI
 public struct AAChartUIView : UIViewRepresentable {
     
     @Binding private var model: AAChartModel
+    @Binding private var series: [AASeriesElement]
     private var options: AAOptions?
     
-    public init(model: Binding<AAChartModel>, options: AAOptions? = nil) {
+    public init(model: Binding<AAChartModel>, series: Binding<[AASeriesElement]>, options: AAOptions? = nil) {
         self.options = options
+
+        _series = series
         _model = model
     }
     
@@ -32,10 +35,10 @@ public struct AAChartUIView : UIViewRepresentable {
     }
     
     public func updateUIView(_ uiView: UIView, context: Context) {
-        guard let series = self.model.series as? [AASeriesElement] else {
-            return
-        }
-
+//        guard let series = self.model.series as? [AASeriesElement] else {
+//            return
+//        }
+        
         let coordinator = context.coordinator
 
         //if self.model.xAxisLabelsEnabled ?? true {
