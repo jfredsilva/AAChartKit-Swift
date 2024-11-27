@@ -42,7 +42,6 @@ public struct AAChartUIView : UIViewRepresentable {
     }
     
     public func updateUIView(_ uiView: UIView, context: Context) {
-        print("DEV__ updateUIView")
         let coordinator = context.coordinator
 
         coordinator.chartView.aa_refreshChartWholeContentWithChartOptions(options)
