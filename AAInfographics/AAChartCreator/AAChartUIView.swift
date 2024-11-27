@@ -8,44 +8,44 @@
 
 import SwiftUI
 
+extension AASeriesElement: Equatable {
+    public static func == (lhs: AASeriesElement, rhs: AASeriesElement) -> Bool {
+        lhs.data?.count == rhs.data?.count
+    }
+}
+
+extension AAOptions: Equatable {
+    public static func == (lhs: AAOptions, rhs: AAOptions) -> Bool {
+        lhs.series as? [AASeriesElement] == rhs.series as? [AASeriesElement]
+    }
+}
+
 @available(iOS 13.0, macOS 10.15, *)
 public struct AAChartUIView : UIViewRepresentable {
     
     @State private var isTooltipOpen: Bool = false
     
-    @Binding private var model: AAChartModel
-    @Binding private var series: [AASeriesElement]
-    @Binding private var options: AAOptions?
+    @Binding private var options: AAOptions
     @Binding private var selectedPoint: Int?
     
-    public init(model: Binding<AAChartModel>, series: Binding<[AASeriesElement]>, options: Binding<AAOptions?> = .constant(nil), selectedPoint: Binding<Int?> = .constant(nil)) {
+    public init(options: Binding<AAOptions>, selectedPoint: Binding<Int?> = .constant(nil)) {
         _options = options
-        _series = series
-        _model = model
         _selectedPoint = selectedPoint
     }
     
     public func makeUIView(context: Context) -> UIView {
         let coordinator = context.coordinator
 
-        if let options = options {
-            coordinator.chartView.aa_drawChartWithChartOptions(options)
-        } else {
-            coordinator.chartView.aa_drawChartWithChartModel(self.model)
-        }
+        coordinator.chartView.aa_drawChartWithChartOptions(options)
         
         return coordinator.chartView
     }
     
     public func updateUIView(_ uiView: UIView, context: Context) {
-        
+        print("DEV__ updateUIView")
         let coordinator = context.coordinator
 
-        if let options = options {
-            coordinator.chartView.aa_refreshChartWholeContentWithChartOptions(options)
-        } else {
-            coordinator.chartView.aa_refreshChartWholeContentWithChartModel(self.model)
-        }
+        coordinator.chartView.aa_refreshChartWholeContentWithChartOptions(options)
         
         if let selectedPoint = self.selectedPoint {
             self.openTooltip(position: selectedPoint, coordinator: coordinator)
@@ -99,7 +99,7 @@ extension AAChartUIView {
             let view = AAChartView()
             view.isClearBackgroundColor = true
             view.isScrollEnabled = false
-            view.aa_drawChartWithChartModel(parent.model)
+            view.aa_drawChartWithChartOptions(parent.options)
             return view
         }()
         
