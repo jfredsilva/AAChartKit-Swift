@@ -26,11 +26,11 @@ public struct AAChartUIView : UIViewRepresentable {
     @State private var isTooltipOpen: Bool = false
     
     @Binding private var options: AAOptions
-    @Binding private var selectedPoint: Int?
+    @Binding private var selectedIndex: Int?
     
     public init(options: Binding<AAOptions>, selectedPoint: Binding<Int?> = .constant(nil)) {
         _options = options
-        _selectedPoint = selectedPoint
+        _selectedIndex = selectedPoint
     }
     
     public func makeUIView(context: Context) -> UIView {
@@ -46,7 +46,7 @@ public struct AAChartUIView : UIViewRepresentable {
 
         coordinator.chartView.aa_refreshChartWholeContentWithChartOptions(options)
         
-        if let selectedPoint = self.selectedPoint {
+        if let selectedPoint = self.selectedIndex {
             self.openTooltip(position: selectedPoint, coordinator: coordinator)
         } else if self.isTooltipOpen {
             self.closeTooltip(coordinator: coordinator)
@@ -56,7 +56,7 @@ public struct AAChartUIView : UIViewRepresentable {
     //-- MARK: coordinator
     
     public func makeCoordinator() -> AAChartCoordinator {
-        AAChartCoordinator(self)
+        AAChartCoordinator(self, selectedIndex: $selectedIndex)
     }
     
     private func openTooltip(position: Int, coordinator: AAChartCoordinator) {
@@ -90,20 +90,28 @@ public struct AAChartUIView : UIViewRepresentable {
 @available(iOS 13.0, macOS 10.15, *)
 extension AAChartUIView {
 
-    public class AAChartCoordinator : NSObject {
+    public class AAChartCoordinator : NSObject, AAChartViewDelegate {
         
         let parent: AAChartUIView
+        @Binding var selectedIndex: Int?
+        
+        public init(_ parent: AAChartUIView, selectedIndex: Binding<Int?>) {
+            self.parent = parent
+            _selectedIndex = selectedIndex
+        }
         
         lazy var chartView: AAChartView = {
             let view = AAChartView()
+            view.delegate = self
             view.isClearBackgroundColor = true
             view.isScrollEnabled = false
             view.aa_drawChartWithChartOptions(parent.options)
             return view
         }()
         
-        init(_ parent: AAChartUIView) {
-            self.parent = parent
+        public func aaChartView(_ aaChartView: AAChartView, clickEventMessage: AAClickEventMessageModel) {
+            print("DEV__ clickEventMessage index \(clickEventMessage.index?.description ?? "")")
+            self.selectedIndex = Int(clickEventMessage.index?.description ?? "")
         }
     }
 }
