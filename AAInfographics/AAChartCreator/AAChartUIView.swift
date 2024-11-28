@@ -110,7 +110,6 @@ extension AAChartUIView {
         }()
         
         public func aaChartView(_ aaChartView: AAChartView, clickEventMessage: AAClickEventMessageModel) {
-            print("DEV__ clickEventMessage index \(clickEventMessage.index?.description ?? "")")
             self.selectedIndex = Int(clickEventMessage.index?.description ?? "")
         }
     }
