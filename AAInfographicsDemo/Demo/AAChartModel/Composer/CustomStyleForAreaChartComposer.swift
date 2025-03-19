@@ -7,7 +7,7 @@ import AAInfographics
 
 class CustomStyleForAreaChartComposer {
 
-    static func withMinusNumberChart() -> AAChartModel {
+    static func withMinusNumberAreaChart() -> AAChartModel {
         AAChartModel()
             .chartType(.area)
             .title("带有负数的区域填充图")
@@ -39,7 +39,7 @@ class CustomStyleForAreaChartComposer {
 
     static func colorfulGradientAreaChart() -> AAChartModel {
         AAChartModel()
-            .chartType(.areaspline)
+            .chartType(.area)
             .categories(["一月", "二月", "三月", "四月", "五月", "六月",
                          "七月", "八月", "九月", "十月", "十一月", "十二月"])
             .backgroundColor(AAColor.white)
@@ -61,9 +61,9 @@ class CustomStyleForAreaChartComposer {
             ])
     }
 
-    static func gradientColorAreasplineChart() -> AAChartModel {
+    static func gradientColorAreaChart() -> AAChartModel {
         AAChartModel()
-            .chartType(.areaspline)
+            .chartType(.area)
             .categories(["一月", "二月", "三月", "四月", "五月", "六月",
                          "七月", "八月", "九月", "十月", "十一月", "十二月"])
             .markerRadius(8)//marker点半径为8个像素
@@ -85,7 +85,7 @@ class CustomStyleForAreaChartComposer {
             ])
     }
 
-    static func areaChartThreshold() -> AAChartModel {
+    static func thresholdForAreaChart() -> AAChartModel {
         AAChartModel()
             .chartType(.area)
             .yAxisGridLineWidth(0)
@@ -110,9 +110,9 @@ class CustomStyleForAreaChartComposer {
             ])
     }
 
-    static func customSpecialStyleDataLabelOfSingleDataElementChart() -> AAChartModel {
+    static func customSpecialStyleDataLabelOfSingleDataElementForAreaChart() -> AAChartModel {
         AAChartModel()
-            .chartType(.areaspline)
+            .chartType(.area)
             .backgroundColor("#4b2b7f")
             .dataLabelsEnabled(false)//是否显示值
             .tooltipEnabled(true)
@@ -148,15 +148,15 @@ class CustomStyleForAreaChartComposer {
                                 .overflow(.none)
                                 .crop(false))
                             .y(26.5)
-                            .toDic()!,
+                            .toDic(),
                         5.2, 26.5, 23.3, 45.3, 13.9, 9.6
                     ])
             ])
     }
 
-    static func customSplineChartMarkerStatesHoverStyle() -> AAChartModel {
+    static func customMarkerStatesHoverStyleForAreaChart() -> AAChartModel {
         AAChartModel()
-            .chartType(.areaspline)
+            .chartType(.area)
             .title("Custom Spline Chart Marker States Hover Style")
             .categories(["一月", "二月", "三月", "四月", "五月", "六月",
                          "七月", "八月", "九月", "十月", "十一月", "十二月"])
@@ -257,9 +257,9 @@ class CustomStyleForAreaChartComposer {
     }
 
     //https://github.com/AAChartModel/AAChartKit/issues/921
-    static func negativeColorMixedAreasplineChart() -> AAChartModel {
+    static func negativeColorMixedAreaChart() -> AAChartModel {
         AAChartModel()
-            .chartType(.areaspline)
+            .chartType(.area)
             .legendEnabled(false)
             .dataLabelsEnabled(false)
             .markerRadius(5)
@@ -296,9 +296,9 @@ class CustomStyleForAreaChartComposer {
     }
 
     //https://github.com/AAChartModel/AAChartCore-Kotlin/issues/149
-    static func customAreasplineChartWithColorfulGradientColorZones() -> AAChartModel {
+    static func customColorfulGradientColorZonesForAreaChart() -> AAChartModel {
         AAChartModel()
-            .chartType(.areaspline)
+            .chartType(.area)
             .backgroundColor(AAColor.black)
             .categories([
                 "Jan", "Feb", "Mar", "Apr", "May", "Jun",

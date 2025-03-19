@@ -89,6 +89,12 @@ class AABaseChartVC: UIViewController {
     private func setupChartView() {
         aaChartView = AAChartView()
         aaChartView!.isScrollEnabled = false
+        //设置 aaChartView 可以调试
+        if #available(iOS 16.4, *) {
+            aaChartView!.isInspectable = true
+        } else {
+            // Fallback on earlier versions
+        }
         aaChartView!.delegate = self as AAChartViewDelegate
         aaChartView!.aa_adaptiveScreenRotation()
         view.addSubview(aaChartView!)
@@ -211,12 +217,47 @@ class AABaseChartVC: UIViewController {
         }
         if (chartConfiguration is AAChartModel) {
             let aaChartModel = chartConfiguration as! AAChartModel
-            aaChartView?.aa_drawChartWithChartModel(aaChartModel)
+            let aaOptions = aaChartModel.aa_toAAOptions()
+            configureGlobalDefaultOptions(aaOptions)
+            aaChartView?.aa_drawChartWithChartOptions(aaOptions)
         } else if (chartConfiguration is AAOptions) {
             let aaOptions = chartConfiguration as! AAOptions
-            aaOptions.touchEventEnabled = true
+            configureGlobalDefaultOptions(aaOptions)
+//            aaOptions.touchEventEnabled = true
             aaChartView?.aa_drawChartWithChartOptions(aaOptions)
         }
+    }
+    
+    fileprivate func configureGlobalDefaultOptions(_ aaOptions: AAOptions) {
+        aaOptions.credits?
+            .enabled(true)
+            .text("https://github.com/AAChartModel/AAChartKit")
+//            .href("https://github.com/AAChartModel/AAChartKit")
+            .style(AAStyle()
+                .color(AAColor.red)
+                .fontSize(9))
+        
+        aaOptions.defaultOptions = AALang()
+            .noData("暂无数据")
+            .resetZoom("点击重置缩放比例")
+        
+//        aaOptions.chart?.pinchType = nil
+        
+//        aaOptions.chart?.zooming?
+//            .resetButton(AAResetButton()
+//                .theme(AAButtonTheme()
+//                    .fill(AAColor.yellow)
+//                    .stroke(AAColor.green)
+//                    .strokeWidth(3)
+//                    .r(3)
+//                    .states(AAButtonThemeStates()
+//                        .hover(AAButtonThemeStatesHover()
+//                            .fill(AAColor.red)
+//                            .style(AAStyle()
+//                                .color(AAColor.white))))))
+//            .singleTouch(true)
+//            .type(.x)
+//            .pinchType(.x)
     }
     
     func refreshChartWithChartConfiguration() {
@@ -233,18 +274,14 @@ class AABaseChartVC: UIViewController {
         }
         if (chartConfiguration is AAChartModel) {
             let aaChartModel = chartConfiguration as! AAChartModel
-            aaChartView?.aa_refreshChartWholeContentWithChartModel(aaChartModel)
+            let aaOptions = aaChartModel.aa_toAAOptions()
+            configureGlobalDefaultOptions(aaOptions)
+            aaChartView?.aa_refreshChartWholeContentWithChartOptions(aaOptions)
         } else if (chartConfiguration is AAOptions) {
             let aaOptions = chartConfiguration as! AAOptions
-            aaOptions.touchEventEnabled = true
-            aaOptions.credits?
-                .enabled(true)
-                .text("https://github.com/AAChartModel/AAChartKit")
-                .href("https://github.com/AAChartModel/AAChartKit")
-                .style(AAStyle()
-                    .color(AAColor.red)
-                    .fontSize(9))
-            aaChartView?.isScrollEnabled = true
+//            aaOptions.touchEventEnabled = true
+            configureGlobalDefaultOptions(aaOptions)
+//            aaChartView?.isScrollEnabled = true
             aaChartView?.aa_refreshChartWholeContentWithChartOptions(aaOptions)
         }
     }

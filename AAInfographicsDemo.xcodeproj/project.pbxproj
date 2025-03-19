@@ -54,14 +54,20 @@
 		84086B1E28E6C612006BD30D /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84086B1C28E6C612006BD30D /* CustomTableViewCell.swift */; };
 		84086B1F28E6C612006BD30D /* CustomTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84086B1D28E6C612006BD30D /* CustomTableViewCell.xib */; };
 		84086B2128E6F499006BD30D /* JSFunctionForAAOptionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84086B2028E6F499006BD30D /* JSFunctionForAAOptionsVC.swift */; };
+		8409E6BA2CDA3805000EFCF2 /* AAButtonTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8409E6B92CDA3805000EFCF2 /* AAButtonTheme.swift */; };
 		840AC39A280CFFA200B10289 /* AAAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840AC396280CFFA200B10289 /* AAAxis.swift */; };
 		8418479928B8755900094106 /* JSFunctionForAAChartEventsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8418479828B8755900094106 /* JSFunctionForAAChartEventsVC.swift */; };
+		842FC3EE2CBE119500FBAD3A /* CustomTooltipEventCallbackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842FC3ED2CBE119500FBAD3A /* CustomTooltipEventCallbackVC.swift */; };
 		844007702B6F37180072FB66 /* CustomStyleForBubbleChartComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440076F2B6F37180072FB66 /* CustomStyleForBubbleChartComposer.swift */; };
 		844007742B6F3FA00072FB66 /* MixedChartVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844007732B6F3FA00072FB66 /* MixedChartVC.swift */; };
 		844007762B6F41A50072FB66 /* SpecialChartComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844007752B6F41A50072FB66 /* SpecialChartComposer.swift */; };
 		844007782B6F9EF50072FB66 /* AAGradientColor+RadialGradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844007772B6F9EF50072FB66 /* AAGradientColor+RadialGradient.swift */; };
 		8440077A2B6FA1860072FB66 /* AAGradientColor+LinearGradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844007792B6FA1860072FB66 /* AAGradientColor+LinearGradient.swift */; };
 		8440077C2B7086960072FB66 /* AAGradientColor+DefaultThemes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440077B2B7086960072FB66 /* AAGradientColor+DefaultThemes.swift */; };
+		8441C0932C62082500A6F784 /* CustomStyleForSplineChartComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8441C0922C62082500A6F784 /* CustomStyleForSplineChartComposer.swift */; };
+		8441C0952C620AC900A6F784 /* CustomStyleForSplineChartVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8441C0942C620AC900A6F784 /* CustomStyleForSplineChartVC.swift */; };
+		8441C0972C620ED400A6F784 /* CustomStyleForAreasplineChartComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8441C0962C620ED400A6F784 /* CustomStyleForAreasplineChartComposer.swift */; };
+		8441C0992C62105400A6F784 /* CustomStyleForAreaSplineChartVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8441C0982C62105400A6F784 /* CustomStyleForAreaSplineChartVC.swift */; };
 		844614D7283C822E00E26DA4 /* ProjectBundlePathLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01D701A2587EE730093C01F /* ProjectBundlePathLoader.swift */; };
 		844F11402B635C9900ADEB1C /* JSFunctionForAAChartEventsVC2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844F113F2B635C9900ADEB1C /* JSFunctionForAAChartEventsVC2.swift */; };
 		844F11462B689B8600ADEB1C /* CustomXAxisLabelsClickEventCallbackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844F11452B689B8600ADEB1C /* CustomXAxisLabelsClickEventCallbackVC.swift */; };
@@ -71,6 +77,9 @@
 		84595DEC2B46B34E00F69273 /* AAOptionsWithJSListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84595DEB2B46B34E00F69273 /* AAOptionsWithJSListVC.swift */; };
 		84595DEE2B47E53C00F69273 /* OfficialSamplesListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84595DED2B47E53C00F69273 /* OfficialSamplesListVC.swift */; };
 		84595DF02B47E8E700F69273 /* AdvancedFeaturesListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84595DEF2B47E8E700F69273 /* AdvancedFeaturesListVC.swift */; };
+		84790F3F2CBF73360047C133 /* CustomTooltipClickEventCallbackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84790F3E2CBF73360047C133 /* CustomTooltipClickEventCallbackVC.swift */; };
+		84790F442CC236C80047C133 /* CustomLargeDateSeriesClickEventCallbackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84790F432CC236C80047C133 /* CustomLargeDateSeriesClickEventCallbackVC.swift */; };
+		84790F4E2CCF2D2C0047C133 /* JSFunctionBeforeAndAfterRenderingComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84790F4D2CCF2D2C0047C133 /* JSFunctionBeforeAndAfterRenderingComposer.swift */; };
 		848FEAF7265DF5D3006E4F25 /* TestAAChartViewForXibVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848FEAF5265DF5D3006E4F25 /* TestAAChartViewForXibVC.swift */; };
 		848FEAF8265DF5D3006E4F25 /* TestAAChartViewForXibVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848FEAF6265DF5D3006E4F25 /* TestAAChartViewForXibVC.xib */; };
 		84A9FB7E28C9BC0E00240C11 /* AAScatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A9FB7C28C9BC0E00240C11 /* AAScatter.swift */; };
@@ -257,14 +266,20 @@
 		84086B1C28E6C612006BD30D /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		84086B1D28E6C612006BD30D /* CustomTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomTableViewCell.xib; sourceTree = "<group>"; };
 		84086B2028E6F499006BD30D /* JSFunctionForAAOptionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSFunctionForAAOptionsVC.swift; sourceTree = "<group>"; };
+		8409E6B92CDA3805000EFCF2 /* AAButtonTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AAButtonTheme.swift; sourceTree = "<group>"; };
 		840AC396280CFFA200B10289 /* AAAxis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AAAxis.swift; sourceTree = "<group>"; };
 		8418479828B8755900094106 /* JSFunctionForAAChartEventsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSFunctionForAAChartEventsVC.swift; sourceTree = "<group>"; };
+		842FC3ED2CBE119500FBAD3A /* CustomTooltipEventCallbackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTooltipEventCallbackVC.swift; sourceTree = "<group>"; };
 		8440076F2B6F37180072FB66 /* CustomStyleForBubbleChartComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStyleForBubbleChartComposer.swift; sourceTree = "<group>"; };
 		844007732B6F3FA00072FB66 /* MixedChartVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixedChartVC.swift; sourceTree = "<group>"; };
 		844007752B6F41A50072FB66 /* SpecialChartComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialChartComposer.swift; sourceTree = "<group>"; };
 		844007772B6F9EF50072FB66 /* AAGradientColor+RadialGradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AAGradientColor+RadialGradient.swift"; sourceTree = "<group>"; };
 		844007792B6FA1860072FB66 /* AAGradientColor+LinearGradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AAGradientColor+LinearGradient.swift"; sourceTree = "<group>"; };
 		8440077B2B7086960072FB66 /* AAGradientColor+DefaultThemes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AAGradientColor+DefaultThemes.swift"; sourceTree = "<group>"; };
+		8441C0922C62082500A6F784 /* CustomStyleForSplineChartComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStyleForSplineChartComposer.swift; sourceTree = "<group>"; };
+		8441C0942C620AC900A6F784 /* CustomStyleForSplineChartVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStyleForSplineChartVC.swift; sourceTree = "<group>"; };
+		8441C0962C620ED400A6F784 /* CustomStyleForAreasplineChartComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStyleForAreasplineChartComposer.swift; sourceTree = "<group>"; };
+		8441C0982C62105400A6F784 /* CustomStyleForAreaSplineChartVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStyleForAreaSplineChartVC.swift; sourceTree = "<group>"; };
 		844614D3283C818D00E26DA4 /* PackageBundlePathLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageBundlePathLoader.swift; sourceTree = "<group>"; };
 		844F113F2B635C9900ADEB1C /* JSFunctionForAAChartEventsVC2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSFunctionForAAChartEventsVC2.swift; sourceTree = "<group>"; };
 		844F11452B689B8600ADEB1C /* CustomXAxisLabelsClickEventCallbackVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomXAxisLabelsClickEventCallbackVC.swift; path = AAInfographicsDemo/Demo/BackUpContent/CustomXAxisLabelsClickEventCallbackVC.swift; sourceTree = SOURCE_ROOT; };
@@ -274,6 +289,9 @@
 		84595DEB2B46B34E00F69273 /* AAOptionsWithJSListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AAOptionsWithJSListVC.swift; sourceTree = "<group>"; };
 		84595DED2B47E53C00F69273 /* OfficialSamplesListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficialSamplesListVC.swift; sourceTree = "<group>"; };
 		84595DEF2B47E8E700F69273 /* AdvancedFeaturesListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedFeaturesListVC.swift; sourceTree = "<group>"; };
+		84790F3E2CBF73360047C133 /* CustomTooltipClickEventCallbackVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTooltipClickEventCallbackVC.swift; sourceTree = "<group>"; };
+		84790F432CC236C80047C133 /* CustomLargeDateSeriesClickEventCallbackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLargeDateSeriesClickEventCallbackVC.swift; sourceTree = "<group>"; };
+		84790F4D2CCF2D2C0047C133 /* JSFunctionBeforeAndAfterRenderingComposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSFunctionBeforeAndAfterRenderingComposer.swift; sourceTree = "<group>"; };
 		848FEAF5265DF5D3006E4F25 /* TestAAChartViewForXibVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAAChartViewForXibVC.swift; sourceTree = "<group>"; };
 		848FEAF6265DF5D3006E4F25 /* TestAAChartViewForXibVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TestAAChartViewForXibVC.xib; sourceTree = "<group>"; };
 		84A9FB7C28C9BC0E00240C11 /* AAScatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AAScatter.swift; sourceTree = "<group>"; };
@@ -348,6 +366,9 @@
 				448330B724E270FE00368A30 /* AdvancedUpdatingFeatureVC.swift */,
 				84DEA0D72846013F00D0206F /* CustomTouchEndEventCallbackVC.swift */,
 				844F11452B689B8600ADEB1C /* CustomXAxisLabelsClickEventCallbackVC.swift */,
+				842FC3ED2CBE119500FBAD3A /* CustomTooltipEventCallbackVC.swift */,
+				84790F3E2CBF73360047C133 /* CustomTooltipClickEventCallbackVC.swift */,
+				84790F432CC236C80047C133 /* CustomLargeDateSeriesClickEventCallbackVC.swift */,
 			);
 			path = AdditionalContent1;
 			sourceTree = "<group>";
@@ -498,6 +519,7 @@
 				27065A5B24C1A7A400D872EB /* AACredits.swift */,
 				27E58D3626EA18B900A0709E /* AAStyle.swift */,
 				2DC11FD83D319267C3D1C1DE /* AABubbleLegend.swift */,
+				8409E6B92CDA3805000EFCF2 /* AAButtonTheme.swift */,
 			);
 			path = AAOptionsModel;
 			sourceTree = "<group>";
@@ -547,6 +569,7 @@
 				844F113F2B635C9900ADEB1C /* JSFunctionForAAChartEventsVC2.swift */,
 				84086B2028E6F499006BD30D /* JSFunctionForAAOptionsVC.swift */,
 				58603418B60256899DD8BF75 /* JSFunctionForAAChartEventsComposer2.swift */,
+				84790F4D2CCF2D2C0047C133 /* JSFunctionBeforeAndAfterRenderingComposer.swift */,
 			);
 			path = AAOptionsWithJS;
 			sourceTree = "<group>";
@@ -574,7 +597,9 @@
 				58603184C6DF4D29C66C028D /* CustomStyleForColumnChartVC.swift */,
 				586039BF1F037FB47A9D7E4D /* CustomStyleForBarChartVC.swift */,
 				84EAD7DB2B91AD660028CB7C /* CustomStyleForLineChartVC.swift */,
+				8441C0942C620AC900A6F784 /* CustomStyleForSplineChartVC.swift */,
 				84EAD7DD2B91B08C0028CB7C /* CustomStyleForAreaChartVC.swift */,
+				8441C0982C62105400A6F784 /* CustomStyleForAreaSplineChartVC.swift */,
 				84EAD7DF2B91B1A10028CB7C /* CustomStyleForScatterChartVC.swift */,
 				84EAD7E12B91B2D10028CB7C /* CustomStyleForBubbleChartVC.swift */,
 			);
@@ -591,7 +616,9 @@
 				5860327DEF5546B683899E44 /* CustomStyleForColumnChartComposer.swift */,
 				58603647D3E17BD4C00CBCF5 /* CustomStyleForBarChartComposer.swift */,
 				844F11472B6B3F2100ADEB1C /* CustomStyleForLineChartComposer.swift */,
+				8441C0922C62082500A6F784 /* CustomStyleForSplineChartComposer.swift */,
 				58603E686F6956B04F862302 /* CustomStyleForAreaChartComposer.swift */,
+				8441C0962C620ED400A6F784 /* CustomStyleForAreasplineChartComposer.swift */,
 				586030C73877C58B03F2F997 /* CustomStyleForScatterChartComposer.swift */,
 				8440076F2B6F37180072FB66 /* CustomStyleForBubbleChartComposer.swift */,
 			);
@@ -835,6 +862,7 @@
 				844F11402B635C9900ADEB1C /* JSFunctionForAAChartEventsVC2.swift in Sources */,
 				84E68FBF2B50E04E00CD8B2D /* CustomStyleForPieChartComposer.swift in Sources */,
 				278C55151EE948C900770B97 /* AAChartModelListVC.swift in Sources */,
+				8441C0992C62105400A6F784 /* CustomStyleForAreaSplineChartVC.swift in Sources */,
 				84F21858292DF373007AA726 /* OfficialAreaChartVC.swift in Sources */,
 				278C54B21EE9472300770B97 /* AppDelegate.swift in Sources */,
 				4409BED021B8CC4900D79278 /* EvaluateJSStringFunctionVC.swift in Sources */,
@@ -847,6 +875,7 @@
 				840716592A70B69C0037193B /* PieChartOptionsVC.swift in Sources */,
 				84F4E0E42BA2CC6B00B3F1F3 /* BasicChartComposer.swift in Sources */,
 				84595DEE2B47E53C00F69273 /* OfficialSamplesListVC.swift in Sources */,
+				84790F4E2CCF2D2C0047C133 /* JSFunctionBeforeAndAfterRenderingComposer.swift in Sources */,
 				276A56FF22C77228007F53E7 /* DoubleChartsLinkedWorkVC.swift in Sources */,
 				84EAD7DE2B91B08C0028CB7C /* CustomStyleForAreaChartVC.swift in Sources */,
 				848FEAF7265DF5D3006E4F25 /* TestAAChartViewForXibVC.swift in Sources */,
@@ -862,9 +891,11 @@
 				8418479928B8755900094106 /* JSFunctionForAAChartEventsVC.swift in Sources */,
 				27E475F924B83AE200690657 /* AABaseChartVC.swift in Sources */,
 				277066112452E99C00C4581D /* ScrollableChartVC.swift in Sources */,
+				84790F3F2CBF73360047C133 /* CustomTooltipClickEventCallbackVC.swift in Sources */,
 				2770FBBF1F93673700091C75 /* OnlyRefreshChartDataVC.swift in Sources */,
 				84F2185A292E10DE007AA726 /* OfficialBarOrColumnChartVC.swift in Sources */,
 				27766455207C55BE00F0A62C /* MixedChartComposer.swift in Sources */,
+				842FC3EE2CBE119500FBAD3A /* CustomTooltipEventCallbackVC.swift in Sources */,
 				278C55161EE948C900770B97 /* SpecialChartVC.swift in Sources */,
 				27FADB8620D6569000FED960 /* HideOrShowChartSeriesVC.swift in Sources */,
 				84AE6B1F26A58380001F0755 /* AADateUTCTool.swift in Sources */,
@@ -874,7 +905,9 @@
 				44EB70A722BCB606008FECE4 /* JSFunctionForAATooltipVC.swift in Sources */,
 				84595DE82B4698D600F69273 /* PolarChartOptionsVC.swift in Sources */,
 				84B68246266DB09100957FC5 /* AAChartSymbolConstant.swift in Sources */,
+				84790F442CC236C80047C133 /* CustomLargeDateSeriesClickEventCallbackVC.swift in Sources */,
 				84086B1628E44B19006BD30D /* JSFunctionForAALegendVC.swift in Sources */,
+				8441C0932C62082500A6F784 /* CustomStyleForSplineChartComposer.swift in Sources */,
 				840716572A6FC5170037193B /* ScatterChartOptionsVC.swift in Sources */,
 				84DEA0D42845ADEB00D0206F /* CustomMouseOutEventCallback.swift in Sources */,
 				449A0ED62377149D009F8FE1 /* ScrollingUpdateDataVC.swift in Sources */,
@@ -882,7 +915,9 @@
 				447B4B3521C9F40900FDA965 /* DrawChartWithAAOptionsVC.swift in Sources */,
 				278C55141EE948C900770B97 /* BasicChartVC.swift in Sources */,
 				84086B1E28E6C612006BD30D /* CustomTableViewCell.swift in Sources */,
+				8441C0972C620ED400A6F784 /* CustomStyleForAreasplineChartComposer.swift in Sources */,
 				844007742B6F3FA00072FB66 /* MixedChartVC.swift in Sources */,
+				8441C0952C620AC900A6F784 /* CustomStyleForSplineChartVC.swift in Sources */,
 				844007762B6F41A50072FB66 /* SpecialChartComposer.swift in Sources */,
 				5860368820ADD4DC745A2997 /* AreaChartOptionsComposer.swift in Sources */,
 				8407165B2A7393FC0037193B /* ColumnChartOptionsVC.swift in Sources */,
@@ -936,6 +971,7 @@
 				ED0A034A272816ED000BF778 /* AASeries.swift in Sources */,
 				ED0A033A272816ED000BF778 /* AATooltip.swift in Sources */,
 				ED0A0345272816ED000BF778 /* AAStyle.swift in Sources */,
+				8409E6BA2CDA3805000EFCF2 /* AAButtonTheme.swift in Sources */,
 				ED0A0333272816E3000BF778 /* AASerializable.swift in Sources */,
 				ED0A0335272816ED000BF778 /* AASubtitle.swift in Sources */,
 				ED0A0348272816ED000BF778 /* AAPlotOptions.swift in Sources */,
@@ -1273,6 +1309,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = Hobbies.AAInfographics;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

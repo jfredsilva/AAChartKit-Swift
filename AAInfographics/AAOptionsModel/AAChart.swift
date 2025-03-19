@@ -30,15 +30,16 @@
  
  */
 
-import Foundation
 
+/// https://api.highcharts.com/highcharts/chart
 public class AAChart: AAObject {
     public var type: String?
     public var backgroundColor: Any?
     public var plotBackgroundColor: Any?
     public var plotBackgroundImage: String?
+    @available(*, deprecated, message: "This property has been deprecated, please use the `pinchType` property of `zooming` property of `AAChart` instead")
     public var pinchType: String?
-    public var panning: Bool?
+    public var panning: AAPanning?
     public var panKey: String?
     public var polar: Bool?
     public var animation: AAAnimation?
@@ -55,7 +56,9 @@ public class AAChart: AAObject {
     public var spacingLeft: Float? //👈
     public var scrollablePlotArea: AAScrollablePlotArea?
     public var resetZoomButton: AAResetZoomButton?
+    @available(*, deprecated, message: "This property has been deprecated, please use the `type` property of `zooming` property of `AAChart` instead")
     public var zoomType: String?
+    public var zooming: AAZooming?
     public var events: AAChartEvents?
     public var height: Any?
     
@@ -89,6 +92,7 @@ public class AAChart: AAObject {
         return self
     }
     
+    @available(*, deprecated, message: "This property has been deprecated, please use the `pinchType` property of `zooming` set method of `AAChart` instead")
     @discardableResult
     public func pinchType(_ prop: AAChartZoomType?) -> AAChart {
         pinchType = prop?.rawValue
@@ -96,7 +100,7 @@ public class AAChart: AAObject {
     }
     
     @discardableResult
-    public func panning(_ prop: Bool?) -> AAChart {
+    public func panning(_ prop: AAPanning?) -> AAChart {
         panning = prop
         return self
     }
@@ -223,9 +227,16 @@ public class AAChart: AAObject {
         return self
     }
     
+    @available(*, deprecated, message: "This method has been deprecated, please use the `type` property of `zooming` set method of `AAChart` instead")
     @discardableResult
     public func zoomType(_ prop: AAChartZoomType?) -> AAChart {
         zoomType = prop?.rawValue
+        return self
+    }
+    
+    @discardableResult
+    public func zooming(_ prop: AAZooming?) -> AAChart {
+        zooming = prop
         return self
     }
     
@@ -292,13 +303,13 @@ public class AAResetZoomButton: AAObject {
     }
 }
 
+
 public class AAChartEvents: AAObject {
     public var click: String?
     public var load: String?
     public var redraw: String?
     public var render: String?
     public var selection: String?
-
 
     @discardableResult
     public func click(_ prop: String?) -> AAChartEvents {
@@ -335,3 +346,132 @@ public class AAChartEvents: AAObject {
     }
 }
 
+
+public class AAPanning: AAObject {
+    public var enabled: Bool?
+    public var type: String?
+    
+    @discardableResult
+    public func enabled(_ prop: Bool?) -> AAPanning {
+        enabled = prop
+        return self
+    }
+    
+    @discardableResult
+    public func type(_ prop: String?) -> AAPanning {
+        type = prop
+        return self
+    }
+    
+    public override init() {
+        
+    }
+}
+
+
+public class AAZooming: AAObject {
+    public var key: String?
+    public var mouseWheel: AAMouseWheel?
+    public var pinchType: String?
+    public var resetButton: AAResetButton?
+    public var singleTouch: Bool?
+    public var type: String?
+    
+    @discardableResult
+    public func key(_ prop: String?) -> AAZooming {
+        key = prop
+        return self
+    }
+    
+    @discardableResult
+    public func mouseWheel(_ prop: AAMouseWheel?) -> AAZooming {
+        mouseWheel = prop
+        return self
+    }
+    
+    @discardableResult
+    public func pinchType(_ prop: AAChartZoomType?) -> AAZooming {
+        pinchType = prop?.rawValue
+        return self
+    }
+    
+    @discardableResult
+    public func resetButton(_ prop: AAResetButton?) -> AAZooming {
+        resetButton = prop
+        return self
+    }
+    
+    @discardableResult
+    public func singleTouch(_ prop: Bool?) -> AAZooming {
+        singleTouch = prop
+        return self
+    }
+    
+    @discardableResult
+    public func type(_ prop: AAChartZoomType?) -> AAZooming {
+        type = prop?.rawValue
+        return self
+    }
+    
+    public override init() {
+        
+    }
+}
+
+
+public class AAMouseWheel: AAObject {
+    public var enabled: Bool?
+    public var sensitivity: Float?
+    public var type: String?
+    
+    @discardableResult
+    public func enabled(_ prop: Bool?) -> AAMouseWheel {
+        enabled = prop
+        return self
+    }
+    
+    @discardableResult
+    public func sensitivity(_ prop: Float?) -> AAMouseWheel {
+        sensitivity = prop
+        return self
+    }
+    
+    @discardableResult
+    public func type(_ prop: String?) -> AAMouseWheel {
+        type = prop
+        return self
+    }
+    
+    public override init() {
+        
+    }
+}
+
+
+public class AAResetButton: AAObject {
+    public var position: AAPosition?
+    public var relativeTo: String?
+    public var theme: [String: Any]?
+    
+    @discardableResult
+    public func position(_ prop: AAPosition?) -> AAResetButton {
+        position = prop
+        return self
+    }
+    
+    @discardableResult
+    public func relativeTo(_ prop: String?) -> AAResetButton {
+        relativeTo = prop
+        return self
+    }
+    
+    @discardableResult
+    public func theme(_ prop: AAButtonTheme?) -> AAResetButton {
+        theme = prop?.toDictionaryProp()
+        return self
+    }
+    
+    public override init() {
+        
+    }
+}

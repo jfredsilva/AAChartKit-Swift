@@ -30,7 +30,8 @@
  
  */
 
-//https://api.highcharts.com/highcharts/chart.animation
+
+/// https://api.highcharts.com/highcharts/chart.animation
 public enum AAChartAnimationType: Int {
     case linear
     case easeInQuad
@@ -69,7 +70,7 @@ public enum AAChartAnimationType: Int {
     case easeTo
 }
 
-//https://api.highcharts.com/highcharts/plotOptions
+/// https://api.highcharts.com/highcharts/plotOptions
 public enum AAChartType: String {
     case column          //Column series display one column per value along an X axis.
     case bar             //A bar series is a special type of column series where the columns are horizontal.
@@ -92,32 +93,32 @@ public enum AAChartType: String {
     case errorbar        //Error bars are a graphical representation of the variability of data and are used on graphs to indicate the error, or uncertainty in a reported measurement.
 }
 
-//https://api.highcharts.com/highcharts/legend.layout
+/// https://api.highcharts.com/highcharts/legend.layout
 public enum AAChartLayoutType: String {
     case horizontal, vertical
 }
 
-//https://api.highcharts.com/highcharts/legend.align
+/// https://api.highcharts.com/highcharts/legend.align
 public enum AAChartAlignType: String {
     case left, center, right
 }
 
-//https://api.highcharts.com/highcharts/legend.verticalAlign
+/// https://api.highcharts.com/highcharts/legend.verticalAlign
 public enum AAChartVerticalAlignType: String {
     case top, middle, bottom
 }
 
-//https://api.highcharts.com/highcharts/chart.zoomType
+/// https://api.highcharts.com/highcharts/chart.zoomType
 public enum AAChartZoomType: String {
     case none, x, y, xy
 }
 
-//https://api.highcharts.com/highcharts/plotOptions.series.stacking
+/// https://api.highcharts.com/highcharts/plotOptions.series.stacking
 public enum AAChartStackingType: String {
     case none = "", normal, percent
 }
 
-//https://api.highcharts.com/highcharts/plotOptions.series.marker.symbol
+/// https://api.highcharts.com/highcharts/plotOptions.series.marker.symbol
 public enum AAChartSymbolType: String {
     case circle   //◉ ◉ ◉
     case square   //■ ■ ■
@@ -130,12 +131,12 @@ public enum AAChartSymbolStyleType: String {
     case normal, innerBlank, borderBlank
 }
 
-//https://api.highcharts.com/highcharts/title.style.fontWeight
+/// https://api.highcharts.com/highcharts/title.style.fontWeight
 public enum AAChartFontWeightType: String {
     case thin, regular, bold
 }
 
-//https://api.highcharts.com/highcharts/series.line.dashStyle
+/// https://api.highcharts.com/highcharts/series.line.dashStyle
 public enum AAChartLineDashStyleType: String {
     case solid           //———————————————————————————————————
     case shortDash       //— — — — — — — — — — — — — — — — — —
@@ -190,11 +191,11 @@ public class AAChartModel: AAObject {
     public var yAxisAllowDecimals: Bool?    //The y axis values label allow decimals or not
     public var tooltipEnabled: Bool?        //Show the tooltip or not
     public var tooltipValueSuffix: String?  //Custom tooltip value unit suffix
-    public var colorsTheme: [Any]?          //An array containing the default colors for the chart's series. When all colors are used, new colors are pulled from the start again. Defaults to: ["#bb250c","#f67210","#fde680","#257679","#f1c6c5"]
+    public var colorsTheme: [Any]?          //An array containing the default colors for the chart's series. When all colors are used, new colors are pulled from the start again. Defaults to: ["#1e90ff", "#ef476f", "#ffd066", "#04d69f", "#25547c",]
     public var series: [Any]?               //An array of all the chart's series
     public var legendEnabled: Bool?         //Enable or disable the legend. Defaults to true
     public var backgroundColor: Any?        //The background color or gradient for the outer chart area. Defaults to #FFFFFF
-    public var borderRadius: Any?         //The corner radius of the outer chart border. Defaults to 0
+    public var borderRadius: Any?           //The corner radius of the outer chart border. Defaults to 0
     public var markerRadius: Float?         //The radius of the point marker. Defaults to 4
     public var scrollablePlotArea: AAScrollablePlotArea?    //Scroll properties if supported
     
@@ -486,7 +487,7 @@ public class AAChartModel: AAObject {
     }
     
     @discardableResult
-    public func borderRadius(_ prop: Any) -> AAChartModel {
+    public func borderRadius(_ prop: AABorderRadius) -> AAChartModel {
         borderRadius = prop
         return self
     }
@@ -496,7 +497,6 @@ public class AAChartModel: AAObject {
         scrollablePlotArea = prop
         return self
     }
-    
 
     public override init() {
         title                  = ""
@@ -506,7 +506,7 @@ public class AAChartModel: AAObject {
         chartType              = .line
         stacking               = AAChartStackingType.none
         zoomType               = AAChartZoomType.none //Disable gesture zoom by default
-        colorsTheme            = ["#1e90ff","#ef476f","#ffd066","#04d69f","#25547c",]
+        colorsTheme            = ["#1e90ff", "#ef476f", "#ffd066", "#04d69f", "#25547c",]
         tooltipEnabled         = true
         xAxisLabelsEnabled     = true
         xAxisVisible           = true

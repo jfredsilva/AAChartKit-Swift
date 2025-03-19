@@ -30,11 +30,12 @@
  
  */
 
-//https://api.highcharts.com/class-reference/Highcharts.GradientColorObject
+
+/// https://api.highcharts.com/class-reference/Highcharts.GradientColorObject
 public class AAGradientColor: AAObject {
     public var linearGradient: AALinearGradient?
     public var radialGradient: AARadialGradient?
-    public var stops: [Float: String]?
+    public var stops: [[Any]]?
     
     @discardableResult
     public func linearGradient(_ prop: AALinearGradient?) -> AAGradientColor {
@@ -49,7 +50,7 @@ public class AAGradientColor: AAObject {
     }
     
     @discardableResult
-    public func stops(_ prop: [Float: String]?) -> AAGradientColor {
+    public func stops(_ prop: [[Any]]?) -> AAGradientColor {
         stops = prop
         return self
     }
@@ -58,6 +59,7 @@ public class AAGradientColor: AAObject {
         
     }
 }
+
 
 public class AALinearGradient: AAObject {
     public var x1: Float?
@@ -90,10 +92,10 @@ public class AALinearGradient: AAObject {
     }
     
     public init(
-        x1: Float? = nil,
-        y1: Float? = nil,
-        x2: Float? = nil,
-        y2: Float? = nil
+        x1: Float,
+        y1: Float,
+        x2: Float,
+        y2: Float
     ) {
         self.x1 = x1
         self.y1 = y1
@@ -106,13 +108,20 @@ public class AALinearGradient: AAObject {
     }
 }
 
+
 public class AARadialGradient: AAObject {
-    public var cx: Float?
-    public var cy: Float?
-    public var r: Float?
+    public var cx: Any?
+    public var cy: Any?
+    public var r: Any?
     
     @discardableResult
     public func cx(_ prop: Float?) -> AARadialGradient {
+        cx = prop
+        return self
+    }
+    
+    @discardableResult
+    public func cx(_ prop: String?) -> AARadialGradient {
         cx = prop
         return self
     }
@@ -124,15 +133,37 @@ public class AARadialGradient: AAObject {
     }
     
     @discardableResult
+    public func cy(_ prop: String?) -> AARadialGradient {
+        cy = prop
+        return self
+    }
+    
+    @discardableResult
     public func r(_ prop: Float?) -> AARadialGradient {
         r = prop
         return self
     }
     
+    @discardableResult
+    public func r(_ prop: String?) -> AARadialGradient {
+        r = prop
+        return self
+    }
+    
     public init(
-        cx: Float? = nil,
-        cy: Float? = nil,
-        r: Float? = nil
+        cx: Float,
+        cy: Float,
+        r: Float
+    ) {
+        self.cx = cx
+        self.cy = cy
+        self.r = r
+    }
+    
+    public init(
+        cx: String,
+        cy: String,
+        r: String
     ) {
         self.cx = cx
         self.cy = cy
