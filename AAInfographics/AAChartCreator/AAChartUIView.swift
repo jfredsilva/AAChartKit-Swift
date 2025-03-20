@@ -110,6 +110,13 @@ extension AAChartUIView {
             view.isClearBackgroundColor = true
             view.isScrollEnabled = false
             view.aa_drawChartWithChartOptions(parent.options)
+            
+            let contentController = WKUserContentController()
+            contentController.add(view, name: "chartZoom")
+            
+            let config = WKWebViewConfiguration()
+            config.userContentController = contentController
+            
             return view
         }()
         
