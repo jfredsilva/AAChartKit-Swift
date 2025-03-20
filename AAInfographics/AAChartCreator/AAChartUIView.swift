@@ -102,6 +102,14 @@ extension AAChartUIView {
         public init(_ parent: AAChartUIView, selectedIndex: Binding<Int?>) {
             self.parent = parent
             _selectedIndex = selectedIndex
+            
+            super.init()
+            
+            let contentController = WKUserContentController()
+            contentController.add(self, name: "chartZoom")
+            
+            let config = WKWebViewConfiguration()
+            config.userContentController = contentController
         }
         
         lazy var chartView: AAChartView = {
@@ -111,11 +119,6 @@ extension AAChartUIView {
             view.isScrollEnabled = false
             view.aa_drawChartWithChartOptions(parent.options)
             
-            let contentController = WKUserContentController()
-            contentController.add(view, name: "chartZoom")
-            
-            let config = WKWebViewConfiguration()
-            config.userContentController = contentController
             
             return view
         }()
