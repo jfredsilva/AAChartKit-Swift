@@ -89,6 +89,10 @@ public class AAChartView: WKWebView {
     
     private var clickEventEnabled: Bool?
     private var touchEventEnabled: Bool?
+//    NSString *_beforeDrawChartJavaScript;
+//    NSString *_afterDrawChartJavaScript;
+    private var beforeDrawChartJavaScript: String?
+    private var afterDrawChartJavaScript: String?
     
     private weak var _delegate: AAChartViewDelegate?
     public weak var delegate: AAChartViewDelegate? {
@@ -194,9 +198,32 @@ public class AAChartView: WKWebView {
    
     
     private func drawChart() {
+//        if (_beforeDrawChartJavaScript) {
+//            [self safeEvaluateJavaScriptString:_beforeDrawChartJavaScript];
+//        }
+        if beforeDrawChartJavaScript != nil {
+#if DEBUG
+            print("📝 \(beforeDrawChartJavaScript ?? "")")
+#endif
+            safeEvaluateJavaScriptString(beforeDrawChartJavaScript!)
+            beforeDrawChartJavaScript = nil
+        }
+        
         //Add `frame.size.height` to solve the problem that the height of the new version of Highcharts chart will not adapt to the container
-        let jsStr = "loadTheHighChartView('\(optionsJson ?? "")','\(contentWidth ?? 0)','\(contentHeight ?? frame.size.height)')"
+        let jsStr = "loadTheHighChartView('\(optionsJson ?? "")','\(contentWidth ?? 0)','\(contentHeight ?? 0)');"
         safeEvaluateJavaScriptString(jsStr)
+        
+//if (self.afterDrawChartJavaScript) {
+//            [self safeEvaluateJavaScriptString:self.afterDrawChartJavaScript];
+//        }
+#if DEBUG
+            print("📝 \(afterDrawChartJavaScript ?? "")")
+#endif
+        if afterDrawChartJavaScript != nil {
+            safeEvaluateJavaScriptString(afterDrawChartJavaScript!)
+            afterDrawChartJavaScript = nil
+
+        }
     }
     
     private func safeEvaluateJavaScriptString (_ jsString: String) {
@@ -221,7 +248,7 @@ public class AAChartView: WKWebView {
                 code = \(objcError.code);
                 domain = \(objcError.domain);
                 userInfo = {
-                    NSLocalizedDescription = "A JavaScript exception occurred";
+                    NSLocalizedDescription = "\(errorUserInfo["NSLocalizedDescription"] ?? "")";
                     WKJavaScriptExceptionColumnNumber = \(errorUserInfo["WKJavaScriptExceptionColumnNumber"] ?? "");
                     WKJavaScriptExceptionLineNumber = \(errorUserInfo["WKJavaScriptExceptionLineNumber"]  ?? "");
                     WKJavaScriptExceptionMessage = \(errorUserInfo["WKJavaScriptExceptionMessage"] ?? "");
@@ -252,19 +279,37 @@ public class AAChartView: WKWebView {
     }
     
     private func configureOptionsJsonStringWithAAOptions(_ aaOptions: AAOptions) {
+//        if (aaOptions.beforeDrawChartJavaScript) {
+//            _beforeDrawChartJavaScript = aaOptions.beforeDrawChartJavaScript;
+//            aaOptions.beforeDrawChartJavaScript = nil;
+//        }
+        if aaOptions.beforeDrawChartJavaScript != nil {
+            beforeDrawChartJavaScript = aaOptions.beforeDrawChartJavaScript
+            aaOptions.beforeDrawChartJavaScript = nil
+        }
+        
+//        if (aaOptions.afterDrawChartJavaScript) {
+//            _afterDrawChartJavaScript = aaOptions.afterDrawChartJavaScript;
+//            aaOptions.afterDrawChartJavaScript = nil;
+//        }
+        
+        if aaOptions.afterDrawChartJavaScript != nil {
+            afterDrawChartJavaScript = aaOptions.afterDrawChartJavaScript
+            aaOptions.afterDrawChartJavaScript = nil
+        }
+        
         if isClearBackgroundColor == true {
             aaOptions.chart?.backgroundColor = AAColor.clear
         }
         
         if clickEventEnabled == true {
             aaOptions.clickEventEnabled = true
-            configurePlotOptionsSeriesPointEvents(aaOptions)
         }
         if touchEventEnabled == true {
             aaOptions.touchEventEnabled = true
-            if clickEventEnabled != true { //Avoid duplicate invocation of configuration method
-                configurePlotOptionsSeriesPointEvents(aaOptions)
-            }
+        }
+        if clickEventEnabled == true || touchEventEnabled == true {
+            configurePlotOptionsSeriesPointEvents(aaOptions)
         }
         
         #if DEBUG
@@ -607,12 +652,12 @@ extension AAChartView {
             queue: nil) { [weak self] _ in
                 //Delay execution by 0.01 seconds to prevent incorrect screen width and height obtained when the screen is rotated
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                    self?.handleDeviceOrientationChangeEventWithAnimation(animation)
+                    self?.aa_resizeChart(animation: animation)
                 }
             }
     }
     
-    private func handleDeviceOrientationChangeEventWithAnimation(_ animation: AAAnimation) {
+    public func aa_resizeChart(animation: AAAnimation) {
         let animationJsonStr = animation.toJSON()
         let jsFuncStr = "changeChartSize('\(frame.size.width)','\(frame.size.height)','\(animationJsonStr)')"
         safeEvaluateJavaScriptString(jsFuncStr)
@@ -735,43 +780,69 @@ extension AAChartView {
 extension AAChartView {
     
     func getJSONStringFromDictionary(dictionary: [String: Any]) -> String {
-        if !JSONSerialization.isValidJSONObject(dictionary) {
-            print("❌ String object is not valid Dictionary JSON String")
+        guard JSONSerialization.isValidJSONObject(dictionary) else {
+            print("❌ Dictionary object is not valid JSON")
             return ""
         }
         
-        let data: Data = try! JSONSerialization.data(withJSONObject: dictionary, options: [])
-        let JSONString = String(data: data, encoding: .utf8)
-        return JSONString! as String
+        do {
+            let data = try JSONSerialization.data(withJSONObject: dictionary, options: [])
+            if let jsonString = String(data: data, encoding: .utf8) {
+                return jsonString
+            }
+        } catch {
+            print("❌ Error serializing dictionary to JSON: \(error.localizedDescription)")
+        }
+        return ""
     }
     
     func getJSONStringFromArray(array: [Any]) -> String {
-        if !JSONSerialization.isValidJSONObject(array) {
-            print("❌ String object is not valid Array JSON String")
+        guard JSONSerialization.isValidJSONObject(array) else {
+            print("❌ Array object is not valid JSON")
             return ""
         }
         
-        let data: Data = try! JSONSerialization.data(withJSONObject: array, options: [])
-        let JSONString = String(data: data, encoding: .utf8)
-        return JSONString! as String
+        do {
+            let data = try JSONSerialization.data(withJSONObject: array, options: [])
+            if let jsonString = String(data: data, encoding: .utf8) {
+                return jsonString
+            }
+        } catch {
+            print("❌ Error serializing array to JSON: \(error.localizedDescription)")
+        }
+        return ""
     }
     
     func getDictionaryFromJSONString(jsonString: String) -> [String: Any] {
-        let jsonData: Data = jsonString.data(using: .utf8)!
-        let dict = try? JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers)
-        if dict != nil {
-            return dict as! [String: Any]
+        guard let jsonData = jsonString.data(using: .utf8) else {
+            print("❌ Failed to convert string to data")
+            return [:]
         }
-        return [String: Any]()
+        
+        do {
+            if let dict = try JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers) as? [String: Any] {
+                return dict
+            }
+        } catch {
+            print("❌ Error parsing JSON string to dictionary: \(error.localizedDescription)")
+        }
+        return [:]
     }
     
     func getArrayFromJSONString(jsonString: String) -> [Any] {
-        let jsonData: Data = jsonString.data(using: .utf8)!
-        let array = try? JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers)
-        if array != nil {
-            return array as! [Any]
+        guard let jsonData = jsonString.data(using: .utf8) else {
+            print("❌ Failed to convert string to data")
+            return []
         }
-        return [Any]()
+        
+        do {
+            if let array = try JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers) as? [Any] {
+                return array
+            }
+        } catch {
+            print("❌ Error parsing JSON string to array: \(error.localizedDescription)")
+        }
+        return []
     }
 }
 

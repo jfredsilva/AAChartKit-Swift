@@ -24,9 +24,10 @@ class AAOptionsWithJSListVC: AABaseListVC {
          
             "JS Function For AAAxis Labels | 通过带有 JS 函数的自定义 AAAxis 的文字标签",
             "JS Function For AALegend | 通过带有 JS 函数的自定义 AALegend",
-            "JS Function For AAChartEvents---通过 JSFunction 自定义 AAChartEvents 的事件",
-            "JS Function For AAChartEvents2---通过 JSFunction 自定义 AAChartEvents 的事件",
             "JS Function For AAOptions---通过 JSFunction 自定义 AAOptions 内容",
+            "JSFunctionForAAChartEventsVC---通过 JSFunction 自定义 AAChartEvents 的事件",
+            "JSFunctionForAAChartEventsVC2---通过 JSFunction 自定义 AAChartEvents 的事件2",
+            "JSFunctionBeforeAndAfterRenderingVC---在图表渲染前后添加 JS 函数",
         ]
         
         chartTypeTitleArr = [
@@ -73,26 +74,6 @@ class AAOptionsWithJSListVC: AABaseListVC {
                 "disableLegendClickEventForPieChart---禁用饼图 legend 点击事件",
                 "customLegendItemClickEvent---自定义图例 legend 的点击事件",
             ],
-            /*JS Function For AAChartEvents*/
-            [
-                "setCrosshairAndTooltipToTheDefaultPositionAfterLoadingChart---图表加载完成后设置 crosshair 和 tooltip 到默认位置",
-                "generalDrawingChart---普通绘图",
-                "advancedTimeLineChart---高级时间轴绘图",
-                "configureBlinkMarkerChart---配置闪烁特效的 marker 图表",
-                "configureSpecialStyleMarkerOfSingleDataElementChartWithBlinkEffect---配置闪烁特效的 marker 图表2",
-                "configureScatterChartWithBlinkEffect---配置闪烁特效的散点图",
-                "automaticallyHideTooltipAfterItIsShown---在浮动提示框显示后自动隐藏",
-                "dynamicHeightGridLineAreaChart---动态高度的网格线区域填充图",
-                "customizeYAxisPlotLinesLabelBeSpecialStyle---自定义 Y 轴轴线上面的标签文字特殊样式",
-                "configureECGStyleChart---配置心电图样式的图表",
-                "configureTheSizeOfTheSliceOfDonutAndPieChart---配置环形图和饼图的扇区大小",
-                "configurePlotBackgroundClickEvent---配置绘图区的点击事件",
-            ],
-            /*JS Function For AAChartEvents 2*/
-            [
-                "addClickEventToXAxisLabelAndAccessData---为 X 轴文字标签添加点击事件并获取到所点击的点的信息",
-                "defaultSelectedAPointForLineChart---默认选中折线图的一个点 marker",
-            ],
             /*JS Function For AAOptions*/
             [
                 "customDoubleXAxesChart---自定义双 X 轴图表",
@@ -100,6 +81,39 @@ class AAOptionsWithJSListVC: AABaseListVC {
                 "customizeEveryDataLabelSinglelyByDataLabelsFormatter---通过 formatter 来自定义单个 dataLabels 元素",
                 "configureColorfulDataLabelsForPieChart---为饼图配置多彩 dataLabels"
             ],
+            /*JSFunctionForAAChartEventsVC*/
+            [
+                "setCrosshairAndTooltipToTheDefaultPositionAfterLoadingChart---图表加载完成后设置 crosshair 和 tooltip 到默认位置",
+                "generalDrawingChart---普通绘图",
+                "advancedTimeLineChart---高级时间轴绘图",
+                "configureBlinkMarkerChart---配置闪烁特效的 marker 图表",
+                "configureSpecialStyleMarkerOfSingleDataElementChartWithBlinkEffect---配置闪烁特效的 marker 图表2",
+                "addEventForLabelClick---为 X 轴文字标签添加点击事件",
+                "automaticallyHideTooltipAfterItIsShown---在浮动提示框显示后自动隐藏",
+                "dynamicHeightGridLineAreaChart---动态高度的网格线区域填充图",
+                "customizeYAxisPlotLinesLabelBeSpecialStyle---自定义 Y 轴轴线上面的标签文字特殊样式",
+                "configureECGStyleChart---配置心电图样式的图表",
+                "configureTheSizeOfTheSliceOfDonutAndPieChart---配置环形图和饼图的扇区大小",
+                "configurePlotBackgroundClickEvent---配置绘图区的点击事件",
+            ],
+            /*JJSFunctionForAAChartEventsVC2*/
+            [
+                "disableHoverEventTooltipEffect---禁用折线图的 hover 事件的 tooltip 效果",
+                "addClickEventToXAxisLabelAndAccessData---给 X 轴标签添加点击事件并获取数据",
+                "defaultSelectedAPointForLineChart---折线图默认选中一个点",
+                "configureBlinkMarkerChart---配置闪烁特效的 marker 图表",
+                "toggleDataLabelsOnTouch---点击后切换数据标签显示",
+                "autoCrosshairAndTooltip---自动十字准星与 tooltip",
+                "simpleZoomingChart---简单放大缩小图表",
+                "simpleZoomingChart2---简单放大缩小图表2",
+            ],
+            /*JSFunctionBeforeAndAfterRenderingVC*/
+            [
+                "clockChart",
+                "synchronizedChart",
+                "sparklineChart",
+                    
+            ]
 
         ]
         
@@ -150,6 +164,14 @@ extension AAOptionsWithJSListVC {
             navigationController?.pushViewController(vc, animated: true)
             
         case 4:
+            /*JS Function For AAOptions*/
+            let vc = JSFunctionForAAOptionsVC()
+            vc.selectedIndex = indexPath.row
+            vc.navigationItemTitleArr = chartTypeTitleArr[indexPath.section]
+            vc.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(vc, animated: true)
+            
+        case 5:
             /*JS Function For AAChartEventsVC*/
             let vc = JSFunctionForAAChartEventsVC()
             vc.selectedIndex = indexPath.row
@@ -157,17 +179,18 @@ extension AAOptionsWithJSListVC {
             vc.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(vc, animated: true)
             
-        case 5:
+        case 6:
             /*JS Function For AAChartEventsVC2*/
             let vc = JSFunctionForAAChartEventsVC2()
             vc.selectedIndex = indexPath.row
             vc.navigationItemTitleArr = chartTypeTitleArr[indexPath.section]
             vc.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(vc, animated: true)
+
             
-        case 6:
-            /*JS Function For AAOptions*/
-            let vc = JSFunctionForAAOptionsVC()
+        case 7:
+            /*JSFunctionBeforeAndAfterRenderingVC*/
+            let vc = JSFunctionBeforeAndAfterRenderingVC()
             vc.selectedIndex = indexPath.row
             vc.navigationItemTitleArr = chartTypeTitleArr[indexPath.section]
             vc.hidesBottomBarWhenPushed = true

@@ -1,19 +1,19 @@
 //
-//  CustomAnyEventCallback.swift
+//  CustomChartZoomEventEventCallbackVC.swift
 //  AAInfographicsDemo
 //
-//  Created by Admin on 2022/5/31.
-//  Copyright © 2022 An An. All rights reserved.
+//  Created by AnAn on 2025/3/20.
+//  Copyright © 2025 An An. All rights reserved.
 //
 
 import AAInfographics
 import WebKit
 
-//https://github.com/AAChartModel/AAChartKit/issues/1531
-//https://stackoverflow.com/questions/42062016/in-high-chart-how-to-add-event-for-label-click
-class CustomXAxisLabelsClickEventCallbackVC: UIViewController {
-    let kUserContentMessageNameXAxisLabelsClick = "XAxisLabelsClick"
-    
+//https://github.com/AAChartModel/AAChartKit-Swift/issues/525
+//https://api.highcharts.com/highcharts/xAxis.events.setExtremes
+class CustomChartZoomEventEventCallbackVC: UIViewController {
+    let kUserContentMessageNameChartZoom = "chartZoom" // New message name for zoom events
+
     private lazy var aaChartView: AAChartView = {
         let chartView = AAChartView()
         chartView.translatesAutoresizingMaskIntoConstraints = false
@@ -47,32 +47,41 @@ class CustomXAxisLabelsClickEventCallbackVC: UIViewController {
     }
     
     private func configureChartViewCustomEventMessageHandler() {
-        aaChartView.configuration.userContentController.add(AALeakAvoider.init(delegate: self), name: kUserContentMessageNameXAxisLabelsClick)
+        aaChartView.configuration.userContentController.add(AALeakAvoider.init(delegate: self), name: kUserContentMessageNameChartZoom)
     }
     
     private func configureChartOptions() -> AAOptions {
         AAOptions()
             .chart(AAChart()
                 .type(.areaspline)
-                .events(AAChartEvents()
-                    .load("""
-            function() {
-                const childNodes = this.xAxis[0].labelGroup.element.childNodes;
-                childNodes
-                .forEach(function(label, index) {
-                    label.style.cursor = "pointer";
-                    label.onclick = function() {
-                        const message = {
-                            category: this.textContent,
-                            index: index,
-                        };
-                        window.webkit.messageHandlers.\(kUserContentMessageNameXAxisLabelsClick).postMessage(message);
-                    }
-                });
-            }
-""")))
+                .zooming(AAZooming()
+                    .singleTouch(true)
+                    .type(.xy)
+                    .pinchType(.xy)
+                    .resetButton(AAResetButton()
+                        .theme(AAButtonTheme()
+                            .fill(AAColor.yellow)
+                            .stroke(AAColor.green)
+                            .strokeWidth(3)
+                            .r(3)
+                            .states(AAButtonThemeStates()
+                                .hover(AAButtonThemeStatesHover()
+                                    .fill(AAColor.red)
+                                    .style(AAStyle()
+                                        .color(AAColor.white))))))))
             .xAxis(AAXAxis()
-                .categories(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]))
+                .categories(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"])
+                .events(AAAxisEvents()
+                    .setExtremes("""
+                    function (event) {
+                        const message = {
+                            min: event.min,
+                            max: event.max,
+                        };
+                        window.webkit.messageHandlers.\(kUserContentMessageNameChartZoom).postMessage(message);
+                    }
+                    """
+                    ))) // Set the zoom event for the X-axis
             .series([
                 AASeriesElement()
                     .data([7.0, 6.9, 2.5, 14.5, 18.2, 21.5, 5.2, 26.5, 23.3, 45.3, 13.9, 9.6])
@@ -85,23 +94,23 @@ class CustomXAxisLabelsClickEventCallbackVC: UIViewController {
 }
 
 
-extension CustomXAxisLabelsClickEventCallbackVC: WKScriptMessageHandler {
+extension CustomChartZoomEventEventCallbackVC: WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        if message.name == kUserContentMessageNameXAxisLabelsClick {
+        if message.name == kUserContentMessageNameChartZoom {
             let messageBody = message.body as! [String: Any]
-            let category = messageBody["category"] as? String
-            let index = messageBody["index"] as? Int
+            let min = messageBody["min"] as? Double
+            let max = messageBody["max"] as? Double
             
             print(
                     """
                     
-                     👇🏻👇🏻👇🏻------------------------------------------------------------------------------------------
-                     clicked X axis label category: \(category ?? "")
+                     🔍🔍🔍-------------------------------------------------------------------------------------------
+                     Chart zoom detected!
                      message = {
-                            category: \(category ?? ""),
-                            index: \(index ?? 0),
+                            min: \(min ?? 0),
+                            max: \(max ?? 0),
                         };
-                     👆👆👆------------------------------------------------------------------------------------------
+                     🔍🔍🔍-------------------------------------------------------------------------------------------
                     
                     """
             )
@@ -110,7 +119,7 @@ extension CustomXAxisLabelsClickEventCallbackVC: WKScriptMessageHandler {
 }
 
 
-extension CustomXAxisLabelsClickEventCallbackVC: AAChartViewDelegate {
+extension CustomChartZoomEventEventCallbackVC: AAChartViewDelegate {
     open func aaChartViewDidFinishLoad(_ aaChartView: AAChartView) {
        print("🚀🚀🚀, AAChartView Did Finished Load!!!")
     }
@@ -138,6 +147,4 @@ extension CustomXAxisLabelsClickEventCallbackVC: AAChartViewDelegate {
     }
 
 }
-
-
 
