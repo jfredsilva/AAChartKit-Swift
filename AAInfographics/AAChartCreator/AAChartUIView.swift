@@ -39,6 +39,13 @@ public struct AAChartUIView : UIViewRepresentable {
 
         coordinator.chartView.aa_drawChartWithChartOptions(options)
         
+//        let webView = coordinator.chartView
+//                webView.navigationDelegate = context.coordinator
+                
+                let userContentController = WKUserContentController()
+                userContentController.add(context.coordinator, name: "chartZoom")
+        coordinator.chartView.configuration.userContentController = userContentController
+        
         return coordinator.chartView
     }
     
@@ -90,11 +97,10 @@ public struct AAChartUIView : UIViewRepresentable {
 
 
 
-
 @available(iOS 13.0, macOS 10.15, *)
 extension AAChartUIView {
 
-    public class AAChartCoordinator : NSObject, AAChartViewDelegate {
+    public class AAChartCoordinator : NSObject, AAChartViewDelegate, WKScriptMessageHandler {
         
         let parent: AAChartUIView
         @Binding var selectedIndex: Int?
@@ -102,14 +108,6 @@ extension AAChartUIView {
         public init(_ parent: AAChartUIView, selectedIndex: Binding<Int?>) {
             self.parent = parent
             _selectedIndex = selectedIndex
-            
-            super.init()
-            
-            let contentController = WKUserContentController()
-            contentController.add(self, name: "chartZoom")
-            
-            let config = WKWebViewConfiguration()
-            config.userContentController = contentController
         }
         
         lazy var chartView: AAChartView = {
@@ -119,6 +117,7 @@ extension AAChartUIView {
             view.isScrollEnabled = false
             view.aa_drawChartWithChartOptions(parent.options)
             
+            view.configuration.userContentController.add(AALeakAvoider.init(delegate: self), name: "chartZoom")
             
             return view
         }()
@@ -126,35 +125,57 @@ extension AAChartUIView {
         public func aaChartView(_ aaChartView: AAChartView, clickEventMessage: AAClickEventMessageModel) {
             self.selectedIndex = Int(clickEventMessage.index?.description ?? "")
         }
+        
+        public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            if message.name == "chartZoom" {
+                let messageBody = message.body as! [String: Any]
+                let min = messageBody["min"] as? Double
+                let max = messageBody["max"] as? Double
+                
+                print(
+                        """
+                        
+                         🔍🔍🔍-------------------------------------------------------------------------------------------
+                         Chart zoom detected!
+                         message = {
+                                min: \(min ?? 0),
+                                max: \(max ?? 0),
+                            };
+                         🔍🔍🔍-------------------------------------------------------------------------------------------
+                        
+                        """
+                )
+            }
+        }
     }
     
     
 }
 
-@available(iOS 13.0, *)
-extension AAChartUIView.AAChartCoordinator: WKScriptMessageHandler {
-    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        if message.name == "chartZoom" {
-            let messageBody = message.body as! [String: Any]
-            let min = messageBody["min"] as? Double
-            let max = messageBody["max"] as? Double
-            
-            print(
-                    """
-                    
-                     🔍🔍🔍-------------------------------------------------------------------------------------------
-                     Chart zoom detected!
-                     message = {
-                            min: \(min ?? 0),
-                            max: \(max ?? 0),
-                        };
-                     🔍🔍🔍-------------------------------------------------------------------------------------------
-                    
-                    """
-            )
-        }
-    }
-}
+//@available(iOS 13.0, *)
+//extension AAChartUIView.AAChartCoordinator: WKScriptMessageHandler {
+//    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+//        if message.name == "chartZoom" {
+//            let messageBody = message.body as! [String: Any]
+//            let min = messageBody["min"] as? Double
+//            let max = messageBody["max"] as? Double
+//            
+//            print(
+//                    """
+//                    
+//                     🔍🔍🔍-------------------------------------------------------------------------------------------
+//                     Chart zoom detected!
+//                     message = {
+//                            min: \(min ?? 0),
+//                            max: \(max ?? 0),
+//                        };
+//                     🔍🔍🔍-------------------------------------------------------------------------------------------
+//                    
+//                    """
+//            )
+//        }
+//    }
+//}
 
 //@available(iOS 13.0, macOS 10.15, *)
 //#Preview {
