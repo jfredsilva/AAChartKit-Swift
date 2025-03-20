@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import WebKit
 
 extension AASeriesElement: Equatable {
     public static func == (lhs: AASeriesElement, rhs: AASeriesElement) -> Bool {
@@ -87,6 +88,9 @@ public struct AAChartUIView : UIViewRepresentable {
     }
 }
 
+
+
+
 @available(iOS 13.0, macOS 10.15, *)
 extension AAChartUIView {
 
@@ -112,9 +116,32 @@ extension AAChartUIView {
         public func aaChartView(_ aaChartView: AAChartView, clickEventMessage: AAClickEventMessageModel) {
             self.selectedIndex = Int(clickEventMessage.index?.description ?? "")
         }
-        
-        public func aaChartView(_ aaChartView: AAChartView, moveOverEventMessage: AAMoveOverEventMessageModel) {
-            print("DEV__ moveOverEventMessage")
+    }
+    
+    
+}
+
+@available(iOS 13.0, *)
+extension AAChartUIView.AAChartCoordinator: WKScriptMessageHandler {
+    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == "chartZoom" {
+            let messageBody = message.body as! [String: Any]
+            let min = messageBody["min"] as? Double
+            let max = messageBody["max"] as? Double
+            
+            print(
+                    """
+                    
+                     🔍🔍🔍-------------------------------------------------------------------------------------------
+                     Chart zoom detected!
+                     message = {
+                            min: \(min ?? 0),
+                            max: \(max ?? 0),
+                        };
+                     🔍🔍🔍-------------------------------------------------------------------------------------------
+                    
+                    """
+            )
         }
     }
 }
