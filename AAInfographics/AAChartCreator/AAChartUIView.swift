@@ -23,13 +23,20 @@ extension AAOptions: Equatable {
 }
 
 @available(iOS 13.0, macOS 10.15, *)
+fileprivate enum AAChartEventsPublisher {
+    static let zoomEvent = PassthroughSubject<Void, Never>()
+}
+
+@available(iOS 13.0, macOS 10.15, *)
 public struct AAChartUIView : UIViewRepresentable {
     
     enum ChartEvents: String {
         case zoom
     }
     
-    let zoomEventPublisher = PassthroughSubject<Void, Never>()
+    public static var zoomEventPublisher: PassthroughSubject<Void, Never> {
+        AAChartEventsPublisher.zoomEvent
+    }
     
     @State private var isTooltipOpen: Bool = false
     
@@ -131,44 +138,8 @@ extension AAChartUIView {
         
         public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
             if message.name == ChartEvents.zoom.rawValue {
-                parent.zoomEventPublisher.send()
+                AAChartEventsPublisher.zoomEvent.send()
             }
         }
     }
-    
-    
 }
-
-
-//@available(iOS 13.0, macOS 10.15, *)
-//#Preview {
-//
-//    let elements = [
-//            AASeriesElement()
-//                .name("Tokyo")
-//                .data([50, 320, 230, 370, 230, 400,])
-//            ,
-//            AASeriesElement()
-//                .name("New York")
-//                .data([80, 390, 210, 340, 240, 350,])
-//            ,
-//            AASeriesElement()
-//                .name("Berlin")
-//                .data([100, 370, 180, 280, 260, 300,])
-//            ,
-//            AASeriesElement()
-//                .name("London")
-//                .data([130, 350, 160, 310, 250, 268,])
-//            ,
-//        ]
-//
-//    let model = AAChartModel()
-//        .chartType(.spline)
-//        .markerSymbolStyle(.borderBlank)
-//        .markerRadius(6)
-//        .categories(["Java", "Swift", "Python", "Ruby", "PHP", "Go","C", "C#", "C++", "Perl", "R", "MATLAB", "SQL"])
-//        .animationType(.swingFromTo)
-//        .series(elements)
-//
-//    return AAChartUIView(model: model)
-//}
