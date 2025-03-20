@@ -127,7 +127,7 @@ extension AAChartUIView {
             view.isScrollEnabled = false
             view.aa_drawChartWithChartOptions(parent.options)
             
-            view.configuration.userContentController.add(AALeakAvoider.init(delegate: self), name: "ChartEvents")
+            view.configuration.userContentController.add(AALeakAvoider.init(delegate: self), name: ChartEvents.zoom.rawValue)
             
             return view
         }()
