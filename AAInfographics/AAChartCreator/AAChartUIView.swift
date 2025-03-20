@@ -30,7 +30,7 @@ fileprivate enum AAChartEventsPublisher {
 @available(iOS 13.0, macOS 10.15, *)
 public struct AAChartUIView : UIViewRepresentable {
     
-    enum ChartEvents: String {
+    public enum ChartEvents: String {
         case zoom
     }
     
@@ -127,7 +127,7 @@ extension AAChartUIView {
             view.isScrollEnabled = false
             view.aa_drawChartWithChartOptions(parent.options)
             
-            view.configuration.userContentController.add(AALeakAvoider.init(delegate: self), name: "chartZoom")
+            view.configuration.userContentController.add(AALeakAvoider.init(delegate: self), name: "ChartEvents")
             
             return view
         }()
