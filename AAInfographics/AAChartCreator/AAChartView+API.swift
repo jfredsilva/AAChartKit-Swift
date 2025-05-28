@@ -30,6 +30,8 @@
  
  */
 
+import Foundation
+
 // MARK: - Configure Chart View Content With AAChartModel
 @available(iOS 10.0, macCatalyst 13.1, macOS 10.13, *)
 extension AAChartView {
