@@ -56,6 +56,7 @@ public class AAOptions: AAObject {
     public var beforeDrawChartJavaScript: String?
     //afterDrawChartJavaScript
     public var afterDrawChartJavaScript: String?
+
     
     @discardableResult
     public func chart(_ prop: AAChart?) -> AAOptions {
@@ -343,7 +344,9 @@ public class AAOptionsConstructor {
             || aaChartType == .boxplot
             || aaChartType == .waterfall
             || aaChartType == .polygon
-            || aaChartType == .gauge {
+            || aaChartType == .gauge
+            || aaChartType == .columnpyramid
+        {
             
             if aaChartType != .gauge {
                 let aaXAxisLabelsEnabled = aaChartModel.xAxisLabelsEnabled

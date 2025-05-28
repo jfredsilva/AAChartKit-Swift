@@ -6,7 +6,6 @@
 //  Copyright © 2024 An An. All rights reserved.
 //
 
-
 import AAInfographics
 
 class JSFunctionBeforeAndAfterRenderingComposer3 {
