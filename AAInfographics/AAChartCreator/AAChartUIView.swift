@@ -25,6 +25,8 @@ extension AAOptions: Equatable {
 @available(iOS 13.0, macOS 10.15, *)
 fileprivate enum AAChartEventsPublisher {
     static let zoomEvent = PassthroughSubject<Void, Never>()
+    static let tooltipEvent = PassthroughSubject<Int, Never>()
+    static let openTooltipEvent = PassthroughSubject<Int, Never>()
 }
 
 @available(iOS 13.0, macOS 10.15, *)
@@ -38,7 +40,13 @@ public struct AAChartUIView : UIViewRepresentable {
         AAChartEventsPublisher.zoomEvent
     }
     
-    @State private var isTooltipOpen: Bool = false
+    public static var tooltipEventPublisher: PassthroughSubject<Int, Never> {
+        AAChartEventsPublisher.tooltipEvent
+    }
+    
+    public static var openTooltipEventPublisher: PassthroughSubject<Int, Never> {
+        AAChartEventsPublisher.openTooltipEvent
+    }
     
     @Binding private var options: AAOptions
     @Binding private var selectedIndex: Int?
@@ -63,45 +71,12 @@ public struct AAChartUIView : UIViewRepresentable {
         let coordinator = context.coordinator
 
         coordinator.chartView.aa_refreshChartWholeContentWithChartOptions(options)
-        
-        if let selectedPoint = self.selectedIndex {
-            self.openTooltip(position: selectedPoint, coordinator: coordinator)
-        } else if self.isTooltipOpen {
-            self.closeTooltip(coordinator: coordinator)
-        }
     }
     
     //-- MARK: coordinator
     
     public func makeCoordinator() -> AAChartCoordinator {
-        AAChartCoordinator(self, selectedIndex: $selectedIndex)
-    }
-    
-    private func openTooltip(position: Int, coordinator: AAChartCoordinator) {
-        self.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\(position)].onMouseOver();", coordinator: coordinator)
-        
-        
-        if self.isTooltipOpen == false {
-            DispatchQueue.main.async {
-                self.isTooltipOpen = true
-            }
-        }
-    }
-    
-    private func closeTooltip(coordinator: AAChartCoordinator) {
-        self.safeEvaluate(javascript: "aaGlobalChart.onMouseOut();", coordinator: coordinator)
-            
-        DispatchQueue.main.async {
-            self.isTooltipOpen = false
-        }
-    }
-    
-    public func safeEvaluate(javascript: String, coordinator: AAChartCoordinator) {
-        coordinator.chartView.evaluateJavaScript(javascript) { _, error in
-            if let error = error {
-                print("Error evaluating JavaScript: \(error.localizedDescription)")
-            }
-        }
+        AAChartCoordinator(self)
     }
 }
 
@@ -113,11 +88,17 @@ extension AAChartUIView {
     public class AAChartCoordinator : NSObject, AAChartViewDelegate, WKScriptMessageHandler {
         
         let parent: AAChartUIView
-        @Binding var selectedIndex: Int?
         
-        public init(_ parent: AAChartUIView, selectedIndex: Binding<Int?>) {
+        private var listeners = [AnyCancellable]()
+        
+        public init(_ parent: AAChartUIView) {
             self.parent = parent
-            _selectedIndex = selectedIndex
+            
+            super.init()
+            self.listeners.append(AAChartUIView.openTooltipEventPublisher
+                .receive(on: RunLoop.main).sink {
+                    self.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\($0)].onMouseOver();")
+                })
         }
         
         lazy var chartView: AAChartView = {
@@ -133,12 +114,22 @@ extension AAChartUIView {
         }()
         
         public func aaChartView(_ aaChartView: AAChartView, clickEventMessage: AAClickEventMessageModel) {
-            self.selectedIndex = Int(clickEventMessage.index?.description ?? "")
+            guard let selectedIndex = Int(clickEventMessage.index?.description ?? "") else { return }
+            
+            AAChartUIView.tooltipEventPublisher.send(selectedIndex)
         }
         
         public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
             if message.name == ChartEvents.zoom.rawValue {
                 AAChartEventsPublisher.zoomEvent.send()
+            }
+        }
+        
+        public func safeEvaluate(javascript: String) {
+            self.chartView.evaluateJavaScript(javascript) { _, error in
+                if let error = error {
+                    print("Error evaluating JavaScript: \(error.localizedDescription)")
+                }
             }
         }
     }
