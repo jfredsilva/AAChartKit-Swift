@@ -97,7 +97,8 @@ extension AAChartUIView {
             super.init()
             self.listeners.append(AAChartUIView.openTooltipEventPublisher
                 .receive(on: RunLoop.main).sink {
-                    self.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\($0)].onMouseOver();")
+                    // + 1 because charts don't start to count on 0 
+                    self.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\($0+1)].onMouseOver();")
                 })
         }
         
