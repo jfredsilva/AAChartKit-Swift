@@ -25,7 +25,7 @@ extension AAOptions: Equatable {
 @available(iOS 13.0, macOS 10.15, *)
 fileprivate enum AAChartEventsPublisher {
     static let zoomEvent = PassthroughSubject<Void, Never>()
-    static let tooltipEvent = PassthroughSubject<Int, Never>()
+    static let tooltipEvent = PassthroughSubject<(Int, String?), Never>()
     static let openTooltipEvent = PassthroughSubject<Int, Never>()
 }
 
@@ -40,7 +40,7 @@ public struct AAChartUIView : UIViewRepresentable {
         AAChartEventsPublisher.zoomEvent
     }
     
-    public static var tooltipEventPublisher: PassthroughSubject<Int, Never> {
+    public static var tooltipEventPublisher: PassthroughSubject<(Int, String?), Never> {
         AAChartEventsPublisher.tooltipEvent
     }
     
@@ -97,8 +97,7 @@ extension AAChartUIView {
             super.init()
             self.listeners.append(AAChartUIView.openTooltipEventPublisher
                 .receive(on: RunLoop.main).sink {
-                    // + 1 because charts don't start to count on 0 
-                    self.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\($0+1)].onMouseOver();")
+                    self.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\($0)].onMouseOver();")
                 })
         }
         
@@ -117,7 +116,7 @@ extension AAChartUIView {
         public func aaChartView(_ aaChartView: AAChartView, clickEventMessage: AAClickEventMessageModel) {
             guard let selectedIndex = Int(clickEventMessage.index?.description ?? "") else { return }
             
-            AAChartUIView.tooltipEventPublisher.send(selectedIndex)
+            AAChartUIView.tooltipEventPublisher.send((selectedIndex, clickEventMessage.name))
         }
         
         public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
