@@ -85,12 +85,7 @@ class JSFunctionForAAAxisComposer2 {
                     .useHTML(true)
                     .formatter("""
                         function() {
-                            const imgMap = {
-                                '苹果': 'https://cdn-icons-png.flaticon.com/512/415/415733.png',
-                                '香蕉': 'https://cdn-icons-png.flaticon.com/512/3144/3144456.png',
-                                '橙子': 'https://cdn-icons-png.flaticon.com/512/3081/3081840.png'
-                            };
-                            return `<img src="${imgMap[this.value]}" width="30" height="30" alt="${this.value}" title="${this.value}">`;
+                            return `<img src="https://cdn-icons-png.flaticon.com/512/415/415733.png" width="30" height="30" alt="${this.value}" title="${this.value}">`;
                         }
                     """)))
             .yAxis(AAYAxis()

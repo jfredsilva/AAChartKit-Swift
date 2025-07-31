@@ -795,7 +795,7 @@ function () {
         let xLabelsFormatter = """
                                function () {
                                    let imageFlag = \(imageLinkFlagJSArrStr)[this.pos];
-                                   let imageLink = "<span><img src=\"https://image.flaticon.com/icons/svg/197/" + imageFlag + ".svg\" style=\"width: 30px; height: 30px;\"/><br></span>";
+                                   let imageLink = "<span><img src=\"https:/image.flaticon.com/icons/svg/197/197582.svg\" style=\"width: 30px; height: 30px;\"/><br></span>";
                                    return imageLink;
                                }
                                """
@@ -813,7 +813,7 @@ function () {
         let tooltipFormatter = """
                                function () {
                                    let imageFlag = \(imageLinkFlagJSArrStr)[this.point.index];
-                                   let imageLink = "<span><img src=\"https://image.flaticon.com/icons/svg/197/" + imageFlag + ".svg\" style=\"width: 30px; height: 30px;\"/><br></span>";
+                                   let imageLink = "<span><img src=\"https://image.flaticon.com/icons/svg/197/197582.svg\" style=\"width: 30px; height: 30px;\"/><br></span>";
                                    return imageLink
                                    + " 🌕 🌖 🌗 🌘 🌑 🌒 🌓 🌔 <br/> "
                                    + " Support JavaScript Function Just Right Now !!! <br/> "
