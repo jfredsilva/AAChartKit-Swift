@@ -29,12 +29,15 @@ fileprivate enum AAChartEventsPublisher {
     static let openTooltipEvent = PassthroughSubject<Int, Never>()
 }
 
-@available(iOS 13.0, macOS 10.15, *)
-public struct AAChartUIView : UIViewRepresentable {
-    
-    public enum ChartEvents: String {
-        case zoom
-    }
+// MARK: - Shared Chart Events
+public enum ChartEvents: String {
+    case zoom
+}
+
+// MARK: - iOS UIViewRepresentable
+#if os(iOS)
+@available(iOS 13.0, *)
+public struct AAChartUIView: UIViewRepresentable {
     
     public static var zoomEventPublisher: PassthroughSubject<Void, Never> {
         AAChartEventsPublisher.zoomEvent
@@ -69,23 +72,18 @@ public struct AAChartUIView : UIViewRepresentable {
     
     public func updateUIView(_ uiView: UIView, context: Context) {
         let coordinator = context.coordinator
-
         coordinator.chartView.aa_refreshChartWholeContentWithChartOptions(options)
     }
-    
-    //-- MARK: coordinator
     
     public func makeCoordinator() -> AAChartCoordinator {
         AAChartCoordinator(self)
     }
 }
 
-
-
-@available(iOS 13.0, macOS 10.15, *)
+@available(iOS 13.0, *)
 extension AAChartUIView {
 
-    public class AAChartCoordinator : NSObject, AAChartViewDelegate, WKScriptMessageHandler {
+    public class AAChartCoordinator: NSObject, AAChartViewDelegate, WKScriptMessageHandler {
         
         let parent: AAChartUIView
         
@@ -134,3 +132,103 @@ extension AAChartUIView {
         }
     }
 }
+#endif
+
+// MARK: - macOS NSViewRepresentable
+#if os(macOS)
+@available(macOS 10.15, *)
+public struct AAChartNSView: NSViewRepresentable {
+    
+    public static var zoomEventPublisher: PassthroughSubject<Void, Never> {
+        AAChartEventsPublisher.zoomEvent
+    }
+    
+    public static var tooltipEventPublisher: PassthroughSubject<(Int, String?), Never> {
+        AAChartEventsPublisher.tooltipEvent
+    }
+    
+    public static var openTooltipEventPublisher: PassthroughSubject<Int, Never> {
+        AAChartEventsPublisher.openTooltipEvent
+    }
+    
+    @Binding private var options: AAOptions
+    @Binding private var selectedIndex: Int?
+    
+    public init(options: Binding<AAOptions>, selectedPoint: Binding<Int?> = .constant(nil)) {
+        _options = options
+        _selectedIndex = selectedPoint
+    }
+    
+    public func makeNSView(context: Context) -> NSView {
+        let coordinator = context.coordinator
+        coordinator.chartView.aa_drawChartWithChartOptions(options)
+        
+        let userContentController = WKUserContentController()
+        userContentController.add(context.coordinator, name: ChartEvents.zoom.rawValue)
+        coordinator.chartView.configuration.userContentController = userContentController
+        
+        return coordinator.chartView
+    }
+    
+    public func updateNSView(_ nsView: NSView, context: Context) {
+        let coordinator = context.coordinator
+        coordinator.chartView.aa_refreshChartWholeContentWithChartOptions(options)
+    }
+    
+    public func makeCoordinator() -> AAChartCoordinator {
+        AAChartCoordinator(self)
+    }
+}
+
+@available(macOS 10.15, *)
+extension AAChartNSView {
+
+    public class AAChartCoordinator: NSObject, AAChartViewDelegate, WKScriptMessageHandler {
+        
+        let parent: AAChartNSView
+        
+        private var listeners = [AnyCancellable]()
+        
+        public init(_ parent: AAChartNSView) {
+            self.parent = parent
+            
+            super.init()
+            self.listeners.append(AAChartNSView.openTooltipEventPublisher
+                .receive(on: RunLoop.main).sink {
+                    self.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\($0)].onMouseOver();")
+                })
+        }
+        
+        lazy var chartView: AAChartView = {
+            let view = AAChartView()
+            view.delegate = self
+            view.isClearBackgroundColor = true
+            view.aa_drawChartWithChartOptions(parent.options)
+            
+            view.configuration.userContentController.add(AALeakAvoider.init(delegate: self), name: ChartEvents.zoom.rawValue)
+            
+            return view
+        }()
+        
+        public func aaChartView(_ aaChartView: AAChartView, clickEventMessage: AAClickEventMessageModel) {
+            guard let selectedIndex = Int(clickEventMessage.index?.description ?? "") else { return }
+            
+            AAChartNSView.tooltipEventPublisher.send((selectedIndex, clickEventMessage.name))
+        }
+        
+        public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            if message.name == ChartEvents.zoom.rawValue {
+                AAChartEventsPublisher.zoomEvent.send()
+            }
+        }
+        
+        public func safeEvaluate(javascript: String) {
+            self.chartView.evaluateJavaScript(javascript) { _, error in
+                if let error = error {
+                    print("Error evaluating JavaScript: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+}
+#endif
