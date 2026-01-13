@@ -38,7 +38,10 @@ public enum ChartEvents: String {
 #if os(iOS)
 @available(iOS 13.0, *)
 public struct AAChartUIView: UIViewRepresentable {
-    
+
+    // MARK: - Backward Compatibility Typealias
+    public typealias ChartEvents = AAInfographics.ChartEvents
+
     public static var zoomEventPublisher: PassthroughSubject<Void, Never> {
         AAChartEventsPublisher.zoomEvent
     }
