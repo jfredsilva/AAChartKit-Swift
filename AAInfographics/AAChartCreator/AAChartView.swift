@@ -184,7 +184,7 @@ public class AAChartView: WKWebView {
 
     public var userPluginPaths: Set<String> = []
 #if DEBUG
-    public var shouldPrintOptionsJSON: Bool = true
+    public var shouldPrintOptionsJSON: Bool = false
 #endif
     
     // MARK: - Initialization
