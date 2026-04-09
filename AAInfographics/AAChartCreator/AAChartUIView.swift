@@ -73,8 +73,17 @@ public struct AAChartUIView: UIViewRepresentable {
         return coordinator.chartView
     }
     
+    // SwiftUI calls updateUIView on every render pass because AAOptions is a
+    // class (reference type) and SwiftUI cannot diff the binding value. Without
+    // this identity guard, each call triggers a full chart redraw (JSON
+    // serialization, JavaScript evaluation, plugin check) even when the options
+    // haven't changed. We skip the redraw when the same AAOptions instance is
+    // passed, and only refresh when a new instance is provided.
     public func updateUIView(_ uiView: UIView, context: Context) {
         let coordinator = context.coordinator
+        let newIdentity = ObjectIdentifier(options)
+        guard newIdentity != coordinator.lastOptionsIdentity else { return }
+        coordinator.lastOptionsIdentity = newIdentity
         coordinator.chartView.aa_refreshChartWholeContentWithChartOptions(options)
     }
     
@@ -87,9 +96,10 @@ public struct AAChartUIView: UIViewRepresentable {
 extension AAChartUIView {
 
     public class AAChartCoordinator: NSObject, AAChartViewDelegate, WKScriptMessageHandler {
-        
+
         let parent: AAChartUIView
-        
+        var lastOptionsIdentity: ObjectIdentifier?
+
         private var listeners = [AnyCancellable]()
         
         public init(_ parent: AAChartUIView) {
