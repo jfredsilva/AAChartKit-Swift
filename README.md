@@ -10,9 +10,10 @@
 [![](https://img.shields.io/badge/support-OC-orange.svg)](https://github.com/AAChartModel/AAChartKit)</br>
 [![](https://jaywcjlove.github.io/sb/lang/chinese.svg)](https://github.com/AAChartModel/AAChartKit-Swift/blob/master/CHINESE-README.md)</br>
 [![](https://jaywcjlove.github.io/sb/lang/english.svg)](https://github.com/AAChartModel/AAChartKit-Swift)</br>
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/AAChartModel/AAChartKit-Swift.svg)](http://isitmaintained.com/project/AAChartModel/AAChartKit-Swift "Average time to resolve an issue")</br>
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/AAChartModel/AAChartKit-Swift.svg)](http://isitmaintained.com/project/AAChartModel/AAChartKit-Swift "Percentage of issues still open")
-[![](https://img.shields.io/badge/AAChartKitSwift-StarHistory-blue.svg)](https://star-history.t9t.io/#AAChartModel/AAChartKit-Swift)</br>
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/AAChartModel/AAChartKit-Swift.svg)](http://isitmaintained.com/project/AAChartModel/AAChartKit-Swift "Average time to resolve an issue")
+[![](https://img.shields.io/badge/AAChartKitSwift-StarHistory-blue.svg)](https://star-history.t9t.io/#AAChartModel/AAChartKit-Swift)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FAAChartModel%2FAAChartKit-Swift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/AAChartModel/AAChartKit-Swift)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FAAChartModel%2FAAChartKit-Swift%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/AAChartModel/AAChartKit-Swift)
 
 ## [ **English Document 🇬🇧** ](https://github.com/AAChartModel/AAChartKit-Swift)  |  [ **简体中文文档 🇨🇳** ](https://github.com/AAChartModel/AAChartKit-Swift/blob/master/CHINESE-README.md)
 ### There is the link of **Objective-C version** of  `AAChartKit` as follow
@@ -76,17 +77,44 @@ to your project Podfile.
 2. Run `pod install` or `pod update`.
 3. Import  `AAInfographics`.
 
+### Swift Package Manager
+
+1. In Xcode, select `File > Add Package Dependencies...`
+2. Enter the package URL:
+```text
+https://github.com/AAChartModel/AAChartKit-Swift.git
+```
+3. Select version `9.5.0` or later.
+4. Add the `AAInfographics` product to your target.
+
+If you use `Package.swift`, add the dependency like this:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/AAChartModel/AAChartKit-Swift.git", from: "9.5.0")
+],
+targets: [
+    .target(
+        name: "YourTarget",
+        dependencies: [
+            .product(name: "AAInfographics", package: "AAChartKit-Swift")
+        ]
+    )
+]
+```
+
 ### Carthage
 
 1. Add following content
 ```ruby
-github "https://github.com/AAChartModel/AAChartKit-Swift.git" ~> 1.0
+github "https://github.com/AAChartModel/AAChartKit-Swift.git" ~> 9.5
 
 ```
 to your project Cartfile.
 
-2. Run `carthage bootstrap` or `carthage update`.
-3. Import  `AAInfographics`.
+2. Run `carthage bootstrap --use-xcframeworks` or `carthage update --use-xcframeworks`.
+3. Link `AAInfographics.xcframework` to your app target.
+4. Import `AAInfographics`.
 
 ### Manually  (old school way)
 
