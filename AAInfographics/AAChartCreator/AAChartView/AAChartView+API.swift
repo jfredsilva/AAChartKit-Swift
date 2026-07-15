@@ -108,6 +108,11 @@ extension AAChartView {
     /// - Parameter aaOptions: The instance object of AAOptions model
     public func aa_refreshChartWholeContentWithChartOptions(_ aaOptions: AAOptions) {
         configureOptionsJsonStringWithAAOptions(aaOptions)
+        // Evaluating against a page that hasn't finished loading (or whose
+        // content process died) throws "Can't find variable" and wastes a full
+        // JSON round-trip. The options are already stored — `didFinish` draws
+        // them when the page is ready.
+        guard isPageLoaded else { return }
         loadAllPluginsAndDrawChart()
     }
 }

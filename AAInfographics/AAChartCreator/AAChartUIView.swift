@@ -56,20 +56,37 @@ public struct AAChartUIView: UIViewRepresentable {
     
     @Binding private var options: AAOptions
     @Binding private var selectedIndex: Int?
-    
-    public init(options: Binding<AAOptions>, selectedPoint: Binding<Int?> = .constant(nil)) {
+    private let refreshOn: AnyPublisher<Void, Never>?
+
+    public init(options: Binding<AAOptions>, selectedPoint: Binding<Int?> = .constant(nil), refreshOn: AnyPublisher<Void, Never>? = nil) {
         _options = options
         _selectedIndex = selectedPoint
+        self.refreshOn = refreshOn
     }
-    
+
+    // The coordinator's lazy chartView already draws the initial options and
+    // registers the zoom handler. A second draw here raced the page load, and
+    // replacing configuration.userContentController on a live, navigating
+    // web view can stall the navigation — leaving a chart that never loads.
+    //
+    // The refreshOn publisher repaints the canvas directly when the host's
+    // data model rebuilds its options: SwiftUI does not reliably re-invoke
+    // updateUIView when only a bound reference type mutates.
     public func makeUIView(context: Context) -> UIView {
         let coordinator = context.coordinator
-        coordinator.chartView.aa_drawChartWithChartOptions(options)
-        
-        let userContentController = WKUserContentController()
-        userContentController.add(context.coordinator, name: ChartEvents.zoom.rawValue)
-        coordinator.chartView.configuration.userContentController = userContentController
-        
+        if let refreshOn, coordinator.refreshSubscription == nil {
+            let binding = _options
+            // Debounce: hosts may rebuild options several times per data event
+            // (entries + visible-range updates) and bursts arrive together —
+            // one repaint per settled burst is enough for a live chart.
+            coordinator.refreshSubscription = refreshOn
+                .debounce(for: .milliseconds(80), scheduler: RunLoop.main)
+                .sink { [weak coordinator] in
+                    guard let coordinator else { return }
+                    coordinator.lastOptionsIdentity = ObjectIdentifier(binding.wrappedValue)
+                    coordinator.chartView.aa_refreshChartWholeContentWithChartOptions(binding.wrappedValue)
+                }
+        }
         return coordinator.chartView
     }
     
@@ -99,19 +116,20 @@ extension AAChartUIView {
 
         let parent: AAChartUIView
         var lastOptionsIdentity: ObjectIdentifier?
+        var refreshSubscription: AnyCancellable?
 
         private var listeners = [AnyCancellable]()
         
         public init(_ parent: AAChartUIView) {
             self.parent = parent
-            
+
             super.init()
             self.listeners.append(AAChartUIView.openTooltipEventPublisher
-                .receive(on: RunLoop.main).sink {
-                    self.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\($0)].onMouseOver();")
+                .receive(on: RunLoop.main).sink { [weak self] in
+                    self?.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\($0)].onMouseOver();")
                 })
         }
-        
+
         lazy var chartView: AAChartView = {
             let view = AAChartView()
             view.delegate = self
@@ -166,20 +184,27 @@ public struct AAChartNSView: NSViewRepresentable {
     
     @Binding private var options: AAOptions
     @Binding private var selectedIndex: Int?
-    
-    public init(options: Binding<AAOptions>, selectedPoint: Binding<Int?> = .constant(nil)) {
+    private let refreshOn: AnyPublisher<Void, Never>?
+
+    public init(options: Binding<AAOptions>, selectedPoint: Binding<Int?> = .constant(nil), refreshOn: AnyPublisher<Void, Never>? = nil) {
         _options = options
         _selectedIndex = selectedPoint
+        self.refreshOn = refreshOn
     }
-    
+
+    // Mirrors makeUIView: the coordinator's lazy chartView draws and wires the
+    // zoom handler — no second draw, no userContentController swap mid-load.
+    // refreshOn repaints the canvas directly on data-model rebuilds.
     public func makeNSView(context: Context) -> NSView {
         let coordinator = context.coordinator
-        coordinator.chartView.aa_drawChartWithChartOptions(options)
-        
-        let userContentController = WKUserContentController()
-        userContentController.add(context.coordinator, name: ChartEvents.zoom.rawValue)
-        coordinator.chartView.configuration.userContentController = userContentController
-        
+        if let refreshOn, coordinator.refreshSubscription == nil {
+            let binding = _options
+            coordinator.refreshSubscription = refreshOn
+                .debounce(for: .milliseconds(80), scheduler: RunLoop.main)
+                .sink { [weak coordinator] in
+                    coordinator?.chartView.aa_refreshChartWholeContentWithChartOptions(binding.wrappedValue)
+                }
+        }
         return coordinator.chartView
     }
     
@@ -199,16 +224,17 @@ extension AAChartNSView {
     public class AAChartCoordinator: NSObject, AAChartViewDelegate, WKScriptMessageHandler {
         
         let parent: AAChartNSView
-        
+        var refreshSubscription: AnyCancellable?
+
         private var listeners = [AnyCancellable]()
         
         public init(_ parent: AAChartNSView) {
             self.parent = parent
-            
+
             super.init()
             self.listeners.append(AAChartNSView.openTooltipEventPublisher
-                .receive(on: RunLoop.main).sink {
-                    self.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\($0)].onMouseOver();")
+                .receive(on: RunLoop.main).sink { [weak self] in
+                    self?.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\($0)].onMouseOver();")
                 })
         }
         

@@ -186,6 +186,11 @@ public class AAChartView: WKWebView {
     
     internal var optionsJson: String?
 
+    /// True once the chart page's `didFinish` fired; false while loading and
+    /// after a web content process termination. JS must not be evaluated
+    /// against a page that isn't ready — `didFinish` draws from `optionsJson`.
+    internal var isPageLoaded = false
+
     // --- Plugin Loader ---
     private var pluginLoader: AAChartViewPluginLoaderProtocol = AAChartViewPluginLoader(provider: AAChartViewPluginProvider())
 
@@ -473,8 +478,30 @@ extension AAChartView:  WKNavigationDelegate {
     }
     
     open func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        isPageLoaded = true
         loadAllPluginsAndDrawChart()
         delegate?.aaChartViewDidFinishLoad?(self)
+    }
+
+    /// WebKit terminates web content processes under memory pressure, which
+    /// wipes the page (and every JS global) while the view keeps showing the
+    /// last rendered frame — a "frozen" chart that silently ignores all
+    /// subsequent JS updates. Recover by reloading the chart page: `didFinish`
+    /// then re-runs the plugin + draw pipeline against the CURRENT
+    /// `optionsJson`, so the chart comes back with the latest data.
+    open func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        debugLog("💀💀💀 Web content process terminated — reloading the chart page to recover.")
+        isPageLoaded = false
+        pluginLoader.resetLoadedState()
+
+        guard let path = BundlePathLoader()
+            .path(forResource: "AAChartView",
+                  ofType: "html",
+                  inDirectory: "AAJSFiles.bundle") else {
+            print("Error: AAChartView.html not found in AAJSFiles.bundle. Chart cannot be recovered.")
+            return
+        }
+        load(URLRequest(url: URL(fileURLWithPath: path)))
     }
 }
 

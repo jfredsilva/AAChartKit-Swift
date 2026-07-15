@@ -28,6 +28,11 @@ internal protocol AAChartViewPluginLoaderProtocol: AnyObject {
 
     /// Executes the post-draw JavaScript script.
     func executeAfterDrawScript(webView: WKWebView)
+
+    /// Clears the loaded-plugin bookkeeping. Called after the web content
+    /// process terminates: the reloaded page starts with no plugins evaluated,
+    /// so previously loaded scripts must be re-injected.
+    func resetLoadedState()
 }
 
 // Default loader for standard version (does nothing)
@@ -57,6 +62,10 @@ internal final class AAChartViewDefaultPluginLoader: AAChartViewPluginLoaderProt
 
     public func executeAfterDrawScript(webView: WKWebView) {
         // No post-draw script for default
+    }
+
+    public func resetLoadedState() {
+        // No state to reset for default
     }
 }
 
@@ -132,6 +141,10 @@ internal final class AAChartViewPluginLoader: AAChartViewPluginLoaderProtocol {
             #endif
             completion()
         }
+    }
+
+    public func resetLoadedState() {
+        loadedPluginPaths.removeAll()
     }
 
     public func executeBeforeDrawScript(webView: WKWebView) {
