@@ -27,6 +27,7 @@ fileprivate enum AAChartEventsPublisher {
     static let zoomEvent = PassthroughSubject<Void, Never>()
     static let tooltipEvent = PassthroughSubject<(Int, String?), Never>()
     static let openTooltipEvent = PassthroughSubject<Int, Never>()
+    static let openTooltipAtSeriesEvent = PassthroughSubject<(series: Int, point: Int), Never>()
 }
 
 // MARK: - Shared Chart Events
@@ -52,6 +53,16 @@ public struct AAChartUIView: UIViewRepresentable {
     
     public static var openTooltipEventPublisher: PassthroughSubject<Int, Never> {
         AAChartEventsPublisher.openTooltipEvent
+    }
+
+    /// Opens the tooltip for a point on a SPECIFIC series.
+    ///
+    /// `openTooltipEventPublisher` carries only a point index and always resolves it against
+    /// `series[0]`, so a chart with more than one series cannot ask for a point on any other
+    /// one — it gets series 0 at that index instead, which is a different timestamp, or out of
+    /// range when the series hold different numbers of points.
+    public static var openTooltipAtSeriesEventPublisher: PassthroughSubject<(series: Int, point: Int), Never> {
+        AAChartEventsPublisher.openTooltipAtSeriesEvent
     }
     
     @Binding private var options: AAOptions
@@ -128,6 +139,12 @@ extension AAChartUIView {
                 .receive(on: RunLoop.main).sink { [weak self] in
                     self?.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\($0)].onMouseOver();")
                 })
+            self.listeners.append(AAChartUIView.openTooltipAtSeriesEventPublisher
+                .receive(on: RunLoop.main).sink { [weak self] in
+                    let series = $0.series
+                    let point = $0.point
+                    self?.safeEvaluate(javascript: "if (aaGlobalChart.series[\(series)] && aaGlobalChart.series[\(series)].points[\(point)]) { aaGlobalChart.series[\(series)].points[\(point)].onMouseOver(); }")
+                })
         }
 
         lazy var chartView: AAChartView = {
@@ -180,6 +197,16 @@ public struct AAChartNSView: NSViewRepresentable {
     
     public static var openTooltipEventPublisher: PassthroughSubject<Int, Never> {
         AAChartEventsPublisher.openTooltipEvent
+    }
+
+    /// Opens the tooltip for a point on a SPECIFIC series.
+    ///
+    /// `openTooltipEventPublisher` carries only a point index and always resolves it against
+    /// `series[0]`, so a chart with more than one series cannot ask for a point on any other
+    /// one — it gets series 0 at that index instead, which is a different timestamp, or out of
+    /// range when the series hold different numbers of points.
+    public static var openTooltipAtSeriesEventPublisher: PassthroughSubject<(series: Int, point: Int), Never> {
+        AAChartEventsPublisher.openTooltipAtSeriesEvent
     }
     
     @Binding private var options: AAOptions
@@ -235,6 +262,12 @@ extension AAChartNSView {
             self.listeners.append(AAChartNSView.openTooltipEventPublisher
                 .receive(on: RunLoop.main).sink { [weak self] in
                     self?.safeEvaluate(javascript: "aaGlobalChart.series[0].points[\($0)].onMouseOver();")
+                })
+            self.listeners.append(AAChartNSView.openTooltipAtSeriesEventPublisher
+                .receive(on: RunLoop.main).sink { [weak self] in
+                    let series = $0.series
+                    let point = $0.point
+                    self?.safeEvaluate(javascript: "if (aaGlobalChart.series[\(series)] && aaGlobalChart.series[\(series)].points[\(point)]) { aaGlobalChart.series[\(series)].points[\(point)].onMouseOver(); }")
                 })
         }
         
