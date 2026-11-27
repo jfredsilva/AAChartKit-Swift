@@ -77,11 +77,12 @@ extension AAChartView {
                       inDirectory: "AAJSFiles.bundle") else {
                 // Consider more robust error handling or logging framework for production code
                 print("Error: AAChartView.html not found in AAJSFiles.bundle. Chart cannot be loaded.")
+                finishInitialRender(.failure(InitialRenderError.missingChartPage))
                 return
             }
             let fileURL = URL(fileURLWithPath: path) // 'path' is a non-optional String here
             let urlRequest = URLRequest(url: fileURL)
-            load(urlRequest)
+            loadChartPage(urlRequest)
         } else {
             aa_refreshChartWholeContentWithChartOptions(aaOptions)
         }

@@ -57,11 +57,18 @@ public struct AAChartUIView: UIViewRepresentable {
     @Binding private var options: AAOptions
     @Binding private var selectedIndex: Int?
     private let refreshOn: AnyPublisher<Void, Never>?
+    private let onInitialRender: (@MainActor (Result<Void, Error>) -> Void)?
 
     public init(options: Binding<AAOptions>, selectedPoint: Binding<Int?> = .constant(nil), refreshOn: AnyPublisher<Void, Never>? = nil) {
+        self.init(options: options, selectedPoint: selectedPoint, refreshOn: refreshOn, onInitialRender: nil)
+    }
+
+    /// Reports initial chart presentation or a chart load failure once per mounted view.
+    public init(options: Binding<AAOptions>, selectedPoint: Binding<Int?> = .constant(nil), refreshOn: AnyPublisher<Void, Never>? = nil, onInitialRender: (@MainActor (Result<Void, Error>) -> Void)?) {
         _options = options
         _selectedIndex = selectedPoint
         self.refreshOn = refreshOn
+        self.onInitialRender = onInitialRender
     }
 
     // The coordinator's lazy chartView already draws the initial options and
@@ -107,6 +114,11 @@ public struct AAChartUIView: UIViewRepresentable {
     public func makeCoordinator() -> AAChartCoordinator {
         AAChartCoordinator(self)
     }
+
+    public static func dismantleUIView(_ uiView: UIView, coordinator: AAChartCoordinator) {
+        (uiView as? AAChartView)?.initialRenderHandler = nil
+        coordinator.refreshSubscription = nil
+    }
 }
 
 @available(iOS 13.0, *)
@@ -135,6 +147,7 @@ extension AAChartUIView {
             view.delegate = self
             view.isClearBackgroundColor = true
             view.isScrollEnabled = false
+            view.initialRenderHandler = self.parent.onInitialRender
             view.aa_drawChartWithChartOptions(parent.options)
             
             view.configuration.userContentController.add(AALeakAvoider.init(delegate: self), name: ChartEvents.zoom.rawValue)
