@@ -118,7 +118,6 @@ public struct AAChartUIView: UIViewRepresentable {
     public static func dismantleUIView(_ uiView: UIView, coordinator: AAChartCoordinator) {
         (uiView as? AAChartView)?.initialRenderHandler = nil
         coordinator.refreshSubscription = nil
-        coordinator.didDismantle = true
     }
 }
 
@@ -130,7 +129,6 @@ extension AAChartUIView {
         let parent: AAChartUIView
         var lastOptionsIdentity: ObjectIdentifier?
         var refreshSubscription: AnyCancellable?
-        fileprivate var didDismantle = false
 
         private var listeners = [AnyCancellable]()
         
@@ -149,14 +147,7 @@ extension AAChartUIView {
             view.delegate = self
             view.isClearBackgroundColor = true
             view.isScrollEnabled = false
-            if let onInitialRender = self.parent.onInitialRender {
-                view.initialRenderHandler = { [weak self] result in
-                    DispatchQueue.main.async { [weak self] in
-                        guard self?.didDismantle == false else { return }
-                        onInitialRender(result)
-                    }
-                }
-            }
+            view.initialRenderHandler = self.parent.onInitialRender
             view.aa_drawChartWithChartOptions(parent.options)
             
             view.configuration.userContentController.add(AALeakAvoider.init(delegate: self), name: ChartEvents.zoom.rawValue)

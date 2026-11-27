@@ -195,12 +195,16 @@ public class AAChartView: WKWebView {
     internal var initialRenderHandler: (@MainActor (Result<Void, Error>) -> Void)?
     private var chartPageNavigation: WKNavigation?
     private var pageGeneration = 0
-    private var presentationGeneration: Int?
+    private var latestDrawRequest = 0
 
     internal func finishInitialRender(_ result: Result<Void, Error>) {
-        let handler = initialRenderHandler
-        initialRenderHandler = nil
-        handler?(result)
+        guard initialRenderHandler != nil else { return }
+        let request = latestDrawRequest
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.latestDrawRequest == request, let handler = self.initialRenderHandler else { return }
+            self.initialRenderHandler = nil
+            handler(result)
+        }
     }
 
     internal func loadChartPage(_ request: URLRequest) {
@@ -248,7 +252,7 @@ public class AAChartView: WKWebView {
     
     // MARK: - Plugin Loading and Chart Drawing
 
-    private func drawChart() {
+    private func drawChart(request: Int) {
         // Execute pre-draw script via loader
         pluginLoader.executeBeforeDrawScript(webView: self)
 
@@ -260,14 +264,12 @@ public class AAChartView: WKWebView {
         }
 
         let jsStr = "loadTheHighChartView('\(optionsJson)','\(contentWidth ?? 0)','\(contentHeight ?? 0)');"
-        let generation = pageGeneration
         safeEvaluateJavaScriptString(jsStr) { [weak self] error in
-            guard let self, self.pageGeneration == generation, self.initialRenderHandler != nil,
-                  self.presentationGeneration != generation else { return }
+            guard let self, self.latestDrawRequest == request, self.initialRenderHandler != nil else { return }
             if let error {
                 self.failInitialRenderUnlessReloading(error)
             } else {
-                self.waitForInitialPresentation(generation: generation)
+                self.waitForInitialPresentation(request: request)
             }
         }
 
@@ -275,17 +277,16 @@ public class AAChartView: WKWebView {
         pluginLoader.executeAfterDrawScript(webView: self)
     }
 
-    private func waitForInitialPresentation(generation: Int) {
+    private func waitForInitialPresentation(request: Int) {
         guard #available(iOS 14.0, macOS 11.0, *) else {
             finishInitialRender(.success(()))
             return
         }
 
-        presentationGeneration = generation
         // WebKit's JavaScript completion can arrive before the chart's first paint.
         let script = "return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve(true))));"
         callAsyncJavaScript(script, in: nil, in: .page) { [weak self] result in
-            guard let self, self.pageGeneration == generation else { return }
+            guard let self, self.latestDrawRequest == request else { return }
             switch result {
             case .success:
                 self.finishInitialRender(.success(()))
@@ -524,14 +525,18 @@ extension AAChartView:  WKNavigationDelegate {
             dict[dependency.dependent] = dependency.on
         }
 
-        let generation = pageGeneration
+        latestDrawRequest += 1
+        let request = latestDrawRequest
+        let page = pageGeneration
+        let awaitingInitialRender = initialRenderHandler != nil
         pluginLoader.loadPluginsIfNeeded(
             webView: self,
             userPlugins: userPluginPaths,
             dependencies: dependenciesDict
         ) { [weak self] in
-            guard let self, self.isPageLoaded, self.pageGeneration == generation else { return }
-            self.drawChart()
+            guard let self, self.isPageLoaded, self.pageGeneration == page,
+                  !awaitingInitialRender || self.latestDrawRequest == request else { return }
+            self.drawChart(request: request)
         }
     }
     
@@ -560,6 +565,7 @@ extension AAChartView:  WKNavigationDelegate {
         debugLog("💀💀💀 Web content process terminated — reloading the chart page to recover.")
         isPageLoaded = false
         pageGeneration += 1
+        latestDrawRequest += 1
         chartPageNavigation = nil
         pluginLoader.resetLoadedState()
 
