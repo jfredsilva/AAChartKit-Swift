@@ -186,6 +186,30 @@ public class AAChartView: WKWebView {
     
     internal var optionsJson: String?
 
+    internal enum InitialRenderError: Error {
+        case missingChartPage
+        case missingChartOptions
+        case navigationDidNotStart
+    }
+
+    internal var initialRenderHandler: (@MainActor (Result<Void, Error>) -> Void)?
+    private var chartPageNavigation: WKNavigation?
+    private var pageGeneration = 0
+    private var presentationGeneration: Int?
+
+    internal func finishInitialRender(_ result: Result<Void, Error>) {
+        let handler = initialRenderHandler
+        initialRenderHandler = nil
+        handler?(result)
+    }
+
+    internal func loadChartPage(_ request: URLRequest) {
+        chartPageNavigation = load(request)
+        if chartPageNavigation == nil {
+            finishInitialRender(.failure(InitialRenderError.navigationDidNotStart))
+        }
+    }
+
     /// True once the chart page's `didFinish` fired; false while loading and
     /// after a web content process termination. JS must not be evaluated
     /// against a page that isn't ready — `didFinish` draws from `optionsJson`.
@@ -229,19 +253,55 @@ public class AAChartView: WKWebView {
         pluginLoader.executeBeforeDrawScript(webView: self)
 
         // Check if optionsJson is ready before drawing
-        guard optionsJson != nil else {
+        guard let optionsJson else {
             debugLog("💀💀💀 Attempted to draw chart before optionsJson was configured.")
+            finishInitialRender(.failure(InitialRenderError.missingChartOptions))
             return
         }
 
-        let jsStr = "loadTheHighChartView('\(optionsJson!)','\(contentWidth ?? 0)','\(contentHeight ?? 0)');"
-        safeEvaluateJavaScriptString(jsStr)
+        let jsStr = "loadTheHighChartView('\(optionsJson)','\(contentWidth ?? 0)','\(contentHeight ?? 0)');"
+        let generation = pageGeneration
+        safeEvaluateJavaScriptString(jsStr) { [weak self] error in
+            guard let self, self.pageGeneration == generation, self.initialRenderHandler != nil,
+                  self.presentationGeneration != generation else { return }
+            if let error {
+                self.failInitialRenderUnlessReloading(error)
+            } else {
+                self.waitForInitialPresentation(generation: generation)
+            }
+        }
 
         // Execute post-draw script via loader
         pluginLoader.executeAfterDrawScript(webView: self)
     }
 
-    internal func safeEvaluateJavaScriptString (_ jsString: String) {
+    private func waitForInitialPresentation(generation: Int) {
+        guard #available(iOS 14.0, macOS 11.0, *) else {
+            finishInitialRender(.success(()))
+            return
+        }
+
+        presentationGeneration = generation
+        // WebKit's JavaScript completion can arrive before the chart's first paint.
+        let script = "return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve(true))));"
+        callAsyncJavaScript(script, in: nil, in: .page) { [weak self] result in
+            guard let self, self.pageGeneration == generation else { return }
+            switch result {
+            case .success:
+                self.finishInitialRender(.success(()))
+            case .failure(let error):
+                self.failInitialRenderUnlessReloading(error)
+            }
+        }
+    }
+
+    private func failInitialRenderUnlessReloading(_ error: Error) {
+        if (error as? WKError)?.code != .webContentProcessTerminated {
+            finishInitialRender(.failure(error))
+        }
+    }
+
+    internal func safeEvaluateJavaScriptString (_ jsString: String, completion: ((Error?) -> Void)? = nil) {
         evaluateJavaScript(jsString, completionHandler: { [weak self] (item, error) in
             guard let self = self else { return }
 #if DEBUG
@@ -272,6 +332,7 @@ public class AAChartView: WKWebView {
 #endif
             
             self.delegate?.aaChartViewDidFinishEvaluate?(self)
+            completion?(error)
         })
     }
     
@@ -463,16 +524,13 @@ extension AAChartView:  WKNavigationDelegate {
             dict[dependency.dependent] = dependency.on
         }
 
+        let generation = pageGeneration
         pluginLoader.loadPluginsIfNeeded(
             webView: self,
             userPlugins: userPluginPaths,
             dependencies: dependenciesDict
         ) { [weak self] in
-            // Ensure options are ready before drawing
-            guard let self = self, self.optionsJson != nil else {
-                self?.debugLog("💀💀💀 AAChartView options not ready after plugin load or view deallocated.")
-                return
-            }
+            guard let self, self.isPageLoaded, self.pageGeneration == generation else { return }
             self.drawChart()
         }
     }
@@ -481,6 +539,15 @@ extension AAChartView:  WKNavigationDelegate {
         isPageLoaded = true
         loadAllPluginsAndDrawChart()
         delegate?.aaChartViewDidFinishLoad?(self)
+    }
+
+    open func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        guard let chartPageNavigation, navigation === chartPageNavigation else { return }
+        finishInitialRender(.failure(error))
+    }
+
+    open func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        self.webView(webView, didFail: navigation, withError: error)
     }
 
     /// WebKit terminates web content processes under memory pressure, which
@@ -492,6 +559,8 @@ extension AAChartView:  WKNavigationDelegate {
     open func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         debugLog("💀💀💀 Web content process terminated — reloading the chart page to recover.")
         isPageLoaded = false
+        pageGeneration += 1
+        chartPageNavigation = nil
         pluginLoader.resetLoadedState()
 
         guard let path = BundlePathLoader()
@@ -499,9 +568,10 @@ extension AAChartView:  WKNavigationDelegate {
                   ofType: "html",
                   inDirectory: "AAJSFiles.bundle") else {
             print("Error: AAChartView.html not found in AAJSFiles.bundle. Chart cannot be recovered.")
+            finishInitialRender(.failure(InitialRenderError.missingChartPage))
             return
         }
-        load(URLRequest(url: URL(fileURLWithPath: path)))
+        loadChartPage(URLRequest(url: URL(fileURLWithPath: path)))
     }
 }
 
